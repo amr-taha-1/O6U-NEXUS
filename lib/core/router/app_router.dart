@@ -10,7 +10,13 @@ import '../../features/auth/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/presentation/screens/splash_screen.dart';
 import '../../features/campus/presentation/screens/campus_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/profile/presentation/screens/about_screen.dart';
+import '../../features/profile/presentation/screens/achievements_screen.dart';
+import '../../features/profile/presentation/screens/privacy_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
+import '../../features/profile/presentation/screens/security_screen.dart';
+import '../../features/profile/presentation/screens/settings_screen.dart';
+import '../../features/profile/presentation/screens/student_id_screen.dart';
 import 'app_routes.dart';
 import 'app_shell.dart';
 
@@ -73,7 +79,19 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: AppRoutes.profile,
                 builder: (context, state) => const ProfileScreen(),
-                routes: const [],
+                routes: [
+                  GoRoute(path: 'student-id', builder: (context, state) => const StudentIdScreen()),
+                  GoRoute(
+                    path: 'settings',
+                    builder: (context, state) => const SettingsScreen(),
+                    routes: [
+                      GoRoute(path: 'privacy', builder: (context, state) => const PrivacyScreen()),
+                      GoRoute(path: 'security', builder: (context, state) => const SecurityScreen()),
+                    ],
+                  ),
+                  GoRoute(path: 'achievements', builder: (context, state) => const AchievementsScreen()),
+                  GoRoute(path: 'about', builder: (context, state) => const AboutScreen()),
+                ],
               ),
             ],
           ),
