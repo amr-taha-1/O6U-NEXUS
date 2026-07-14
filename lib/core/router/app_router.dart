@@ -10,6 +10,11 @@ import '../../features/academics/presentation/screens/graduation_screen.dart';
 import '../../features/academics/presentation/screens/schedule_screen.dart';
 import '../../features/academics/presentation/screens/transcript_screen.dart';
 import '../../features/ai/presentation/screens/ai_screen.dart';
+import '../../features/ai/presentation/screens/gpa_simulator_screen.dart';
+import '../../features/ai/presentation/screens/graduation_planner_screen.dart';
+import '../../features/ai/presentation/screens/lecture_summary_screen.dart';
+import '../../features/ai/presentation/screens/resume_builder_screen.dart';
+import '../../features/ai/presentation/screens/study_planner_screen.dart';
 import '../../features/auth/presentation/screens/face_id_screen.dart';
 import '../../features/auth/presentation/screens/forgot_password_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
@@ -79,7 +84,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: AppRoutes.ai,
                 builder: (context, state) => const AiScreen(),
-                routes: const [],
+                routes: [
+                  GoRoute(path: 'gpa-simulator', builder: (context, state) => const GpaSimulatorScreen()),
+                  GoRoute(path: 'study-planner', builder: (context, state) => const StudyPlannerScreen()),
+                  GoRoute(path: 'graduation-planner', builder: (context, state) => const GraduationPlannerScreen()),
+                  GoRoute(path: 'resume-builder', builder: (context, state) => const ResumeBuilderScreen()),
+                  GoRoute(path: 'lecture-summary', builder: (context, state) => const LectureSummaryScreen()),
+                ],
               ),
             ],
           ),
