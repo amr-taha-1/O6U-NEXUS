@@ -8,7 +8,10 @@ import '../../features/auth/presentation/screens/forgot_password_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/presentation/screens/splash_screen.dart';
+import '../../features/campus/presentation/screens/book_exchange_screen.dart';
 import '../../features/campus/presentation/screens/campus_screen.dart';
+import '../../features/campus/presentation/screens/freelance_screen.dart';
+import '../../features/campus/presentation/screens/internships_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import 'app_routes.dart';
@@ -64,7 +67,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: AppRoutes.campus,
                 builder: (context, state) => const CampusScreen(),
-                routes: const [],
+                routes: [
+                  GoRoute(path: 'book-exchange', builder: (context, state) => const BookExchangeScreen()),
+                  GoRoute(path: 'internships', builder: (context, state) => const InternshipsScreen()),
+                  GoRoute(path: 'freelance', builder: (context, state) => const FreelanceScreen()),
+                ],
               ),
             ],
           ),

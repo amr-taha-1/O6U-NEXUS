@@ -34,20 +34,27 @@ class AppSearchBar extends StatelessWidget {
             Icon(CupertinoIcons.search, size: 16, color: colors.textDim),
             const SizedBox(width: 9),
             Expanded(
-              child: TextField(
-                controller: controller,
-                onChanged: onChanged,
-                onTap: onTap,
-                readOnly: readOnly,
-                style: context.textStyles.body.copyWith(color: colors.textPrimary),
-                cursorColor: colors.accent,
-                textAlignVertical: TextAlignVertical.center,
-                decoration: InputDecoration(
-                  isDense: true,
-                  border: InputBorder.none,
-                  hintText: hintText,
-                  hintStyle: context.textStyles.body.copyWith(color: colors.textDim),
-                  contentPadding: EdgeInsets.zero,
+              // `TextField` is a Material widget and asserts a `Material` ancestor at
+              // build time. Nothing above this point in the tree (the Cupertino-styled
+              // scaffolds) provides one, so it's supplied locally — `transparency` adds
+              // no fill, elevation, or ink, keeping the iOS HIG look intact.
+              child: Material(
+                type: MaterialType.transparency,
+                child: TextField(
+                  controller: controller,
+                  onChanged: onChanged,
+                  onTap: onTap,
+                  readOnly: readOnly,
+                  style: context.textStyles.body.copyWith(color: colors.textPrimary),
+                  cursorColor: colors.accent,
+                  textAlignVertical: TextAlignVertical.center,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    border: InputBorder.none,
+                    hintText: hintText,
+                    hintStyle: context.textStyles.body.copyWith(color: colors.textDim),
+                    contentPadding: EdgeInsets.zero,
+                  ),
                 ),
               ),
             ),

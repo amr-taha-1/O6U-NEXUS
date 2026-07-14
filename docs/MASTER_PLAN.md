@@ -83,12 +83,12 @@ Status legend: ⬜ not started · 🟨 in progress · ✅ done
 | 17 | Assignments | C | ⬜ |
 | 18 | Graduation Progress | C | ⬜ |
 | 19 | Marketplace | D | ⬜ |
-| 20 | Book Exchange | D | ⬜ |
+| 20 | Book Exchange | D | ✅ |
 | 21 | Lost & Found | D | ⬜ |
 | 22 | Study Groups | D | ⬜ |
 | 23 | Events | D | ⬜ |
-| 24 | Internships | D | ⬜ |
-| 25 | Freelance | D | ⬜ |
+| 24 | Internships | D | ✅ |
+| 25 | Freelance | D | ✅ |
 | 26 | AI Assistant (Nexus chat) | E | ⬜ |
 | 27 | AI Study Planner | E | ⬜ |
 | 28 | AI GPA Simulator | E | ⬜ |
