@@ -1,10 +1,10 @@
-﻿import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/widgets.dart';
 
-/// Not in the design reference â€” added to satisfy the full auth flow.
+/// Not in the design reference — added to satisfy the full auth flow.
 /// Follows the same field/button language as [LoginScreen] and resolves to
 /// an honest confirmation state (no backend exists yet to actually send
 /// anything).

@@ -9,7 +9,7 @@ import '../../../../shared/domain/student.dart';
 import '../../application/academics_providers.dart';
 
 /// Compresses four years into one legible path with one warning. Ports the
-/// reference's `GradPlanner` component (SPECS.gradplan) — framed here as
+/// reference's `GradPlanner` component (SPECS.gradplan) � framed here as
 /// the static "Graduation Progress" record, not the AI chat framing that a
 /// separate in-progress feature owns.
 class GraduationScreen extends ConsumerWidget {
@@ -47,7 +47,7 @@ class GraduationScreen extends ConsumerWidget {
                         Text('96% on-time', style: text.title3),
                         const SizedBox(height: 2),
                         Text(
-                          '${student.creditHoursRemaining} hours left Â· graduate ${student.expectedGraduation}',
+                          '${student.creditHoursRemaining} hours left · graduate ${student.expectedGraduation}',
                           style: text.subhead.copyWith(fontSize: 13.5),
                         ),
                       ],
@@ -167,7 +167,7 @@ class _BottleneckCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Predicted bottleneck Â· CS412', style: text.bodyEmphasized.copyWith(fontSize: 14.5)),
+                Text('Predicted bottleneck · CS412', style: text.bodyEmphasized.copyWith(fontSize: 14.5)),
                 const SizedBox(height: 3),
                 Text(
                   'Offered in Fall only, and a prerequisite for two remaining courses. Taking it this summer removes a full semester of delay.',

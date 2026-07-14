@@ -1,4 +1,4 @@
-﻿import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/widgets.dart';
@@ -8,7 +8,7 @@ Future<void> showCourseDetailsSheet(BuildContext context, Course course) {
   return showAppBottomSheet(context, builder: (_) => CourseDetailsSheet(course: course));
 }
 
-/// A course's grade, attendance, and materials â€” opens as a sheet, not a
+/// A course's grade, attendance, and materials — opens as a sheet, not a
 /// new page, so the student never loses the Academics list. See
 /// docs/reference/o6u-nexus-ios.tsx SPECS.portal pin #3.
 class CourseDetailsSheet extends StatelessWidget {
@@ -17,9 +17,9 @@ class CourseDetailsSheet extends StatelessWidget {
   final Course course;
 
   static const _materials = [
-    ('Lecture 7 Â· Balanced trees', 'PDF Â· 2.4 MB', false),
-    ('Assignment 5', 'Due Sunday Â· not submitted', true),
-    ('Past papers Â· 2024', 'PDF Â· 6 files', false),
+    ('Lecture 7 · Balanced trees', 'PDF · 2.4 MB', false),
+    ('Assignment 5', 'Due Sunday · not submitted', true),
+    ('Past papers · 2024', 'PDF · 6 files', false),
   ];
 
   @override

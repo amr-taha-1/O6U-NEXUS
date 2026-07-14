@@ -35,9 +35,11 @@ class AppSearchBar extends StatelessWidget {
             const SizedBox(width: 9),
             Expanded(
               // `TextField` is a Material widget and asserts a `Material` ancestor at
-              // build time. Nothing above this point in the tree (the Cupertino-styled
-              // scaffolds) provides one, so it's supplied locally — `transparency` adds
-              // no fill, elevation, or ink, keeping the iOS HIG look intact.
+              // build time. main.dart's root `MaterialApp.builder` provides one for the
+              // real app, but this widget wraps its own too so it also works standalone
+              // (isolated widget tests, Storybook-style previews, future reuse) without
+              // depending on how it's hosted. `transparency` adds no fill, elevation, or
+              // ink — the iOS HIG look is unaffected either way.
               child: Material(
                 type: MaterialType.transparency,
                 child: TextField(

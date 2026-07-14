@@ -1,10 +1,10 @@
-﻿import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/widgets.dart';
 import '../../../../shared/domain/campus_listing.dart';
 
-/// The one card every Campus screen uses â€” Market, Book Exchange, Lost &
+/// The one card every Campus screen uses — Market, Book Exchange, Lost &
 /// Found, Study Groups, Events, Internships, Freelance are all this same
 /// {title, subtitle, price?, status, color} shape. See
 /// docs/reference/o6u-nexus-ios.tsx SPECS.campus pin #2 ("trust is a design

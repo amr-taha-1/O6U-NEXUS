@@ -1,10 +1,10 @@
-﻿import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../theme/theme.dart';
 
 /// A tappable icon + title + subtitle row with a trailing chevron, grouped
 /// inside a card. Used for Portal's "Records" list, Me's "Campus"/"Alerts"
-/// rows, and any settings-style list â€” see PROJECT_RULES.md Â§1 ("promote a
+/// rows, and any settings-style list — see PROJECT_RULES.md §1 ("promote a
 /// repeated widget instead of copying it").
 class NavRowCard extends StatelessWidget {
   const NavRowCard({

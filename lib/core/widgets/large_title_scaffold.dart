@@ -1,9 +1,9 @@
-﻿import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../theme/theme.dart';
 
 /// The collapsing large-title scaffold used by every top-level tab (Home,
-/// Academics, AI, Campus, Profile) â€” ports the reference's `Nav` component,
+/// Academics, AI, Campus, Profile) — ports the reference's `Nav` component,
 /// which is exactly what [CupertinoSliverNavigationBar] already does
 /// natively, so we lean on it instead of hand-rolling scroll-linked opacity.
 class LargeTitleScaffold extends StatelessWidget {
@@ -47,7 +47,7 @@ class LargeTitleScaffold extends StatelessWidget {
 }
 
 /// A back-button + centered-title top bar for pushed sub-screens (Schedule,
-/// Grades, Attendance, â€¦) â€” the reference's `Push` component.
+/// Grades, Attendance, …) — the reference's `Push` component.
 class AppPushScaffold extends StatelessWidget {
   const AppPushScaffold({super.key, required this.title, required this.body});
 

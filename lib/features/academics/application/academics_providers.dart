@@ -8,7 +8,7 @@ import '../domain/exam.dart';
 
 /// Screen-local dummy fixtures for Academics' pushed sub-screens. These are
 /// small enough, and specific enough to a single screen, that a repository
-/// indirection would add no value — same call as
+/// indirection would add no value � same call as
 /// `features/home/application/home_providers.dart`'s `todayScheduleProvider`.
 
 /// One tile in the Schedule screen's week strip.
@@ -32,23 +32,23 @@ final weekScheduleProvider = Provider<List<ScheduleItem>>((ref) {
   return [
     ScheduleItem(
       time: '09:00',
-      title: 'EN102 Â· Technical Writing',
-      meta: 'Hall D3 Â· Dr. Nadia',
+      title: 'EN102 · Technical Writing',
+      meta: 'Hall D3 · Dr. Nadia',
       accent: c.info,
       icon: CupertinoIcons.book,
       kind: ScheduleItemKind.lecture,
     ),
     ScheduleItem(
       time: '10:30',
-      title: 'CS402 Â· Data Structures',
-      meta: 'Hall A1 Â· moved Â· Dr. Hesham',
+      title: 'CS402 · Data Structures',
+      meta: 'Hall A1 · moved · Dr. Hesham',
       accent: c.accent,
       icon: CupertinoIcons.book,
       kind: ScheduleItemKind.lecture,
     ),
     ScheduleItem(
       time: '12:30',
-      title: 'Free Â· Nexus placed revision',
+      title: 'Free · Nexus placed revision',
       meta: 'Library Room 4',
       accent: c.success,
       icon: CupertinoIcons.sparkles,
@@ -56,8 +56,8 @@ final weekScheduleProvider = Provider<List<ScheduleItem>>((ref) {
     ),
     ScheduleItem(
       time: '15:30',
-      title: 'MA201 Â· Lab',
-      meta: 'Lab 4 Â· Eng. Omar',
+      title: 'MA201 · Lab',
+      meta: 'Lab 4 · Eng. Omar',
       accent: c.warning,
       icon: CupertinoIcons.exclamationmark_triangle,
       kind: ScheduleItemKind.lab,
@@ -65,7 +65,7 @@ final weekScheduleProvider = Provider<List<ScheduleItem>>((ref) {
   ];
 });
 
-/// This semester's GPA — distinct from the student's cumulative GPA.
+/// This semester's GPA � distinct from the student's cumulative GPA.
 final semesterGpaProvider = Provider<double>((ref) => 3.24);
 
 /// Overall attendance across all courses (the same 92% cited on Home's
@@ -151,19 +151,19 @@ final assignmentsProvider = Provider<List<Assignment>>((ref) {
     Assignment(
       title: 'Assignment 4',
       courseCode: 'CS402',
-      dueLabel: 'Graded Â· A',
+      dueLabel: 'Graded · A',
       status: AssignmentStatus.graded,
     ),
     Assignment(
       title: 'Essay Draft',
       courseCode: 'EN102',
-      dueLabel: 'Graded Â· A-',
+      dueLabel: 'Graded · A-',
       status: AssignmentStatus.graded,
     ),
   ];
 });
 
-/// Level 1-3 done, Level 4 now, Summer advised, Graduation forecast — ports
+/// Level 1-3 done, Level 4 now, Summer advised, Graduation forecast � ports
 /// the reference's `GradPlanner` `steps` array.
 final graduationStepsProvider = Provider<List<GraduationStep>>((ref) {
   final c = AppColors.dark;

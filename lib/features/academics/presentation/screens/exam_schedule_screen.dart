@@ -6,8 +6,8 @@ import '../../../../core/widgets/widgets.dart';
 import '../../application/academics_providers.dart';
 import '../../domain/exam.dart';
 
-/// Not in the design reference — designed to match the Records list on
-/// Academics and the "Next exam Â· 3 days" stat already shown on Home.
+/// Not in the design reference � designed to match the Records list on
+/// Academics and the "Next exam · 3 days" stat already shown on Home.
 class ExamScheduleScreen extends ConsumerWidget {
   const ExamScheduleScreen({super.key});
 
@@ -70,7 +70,7 @@ class _ExamCard extends StatelessWidget {
             children: [
               Icon(CupertinoIcons.calendar, size: 14, color: colors.textDim),
               const SizedBox(width: 6),
-              Expanded(child: Text('${exam.date} Â· ${exam.time}', style: text.subhead.copyWith(fontSize: 13))),
+              Expanded(child: Text('${exam.date} · ${exam.time}', style: text.subhead.copyWith(fontSize: 13))),
             ],
           ),
           const SizedBox(height: 6),

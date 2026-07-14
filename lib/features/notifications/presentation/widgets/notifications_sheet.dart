@@ -1,4 +1,4 @@
-﻿import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -8,7 +8,7 @@ import '../../../../shared/application/notifications_controller.dart';
 import '../../../../shared/domain/app_notification.dart';
 
 /// Carries the app's notification channels into one ranked, honest list.
-/// Filters, not folders â€” a student scans by kind and never files anything.
+/// Filters, not folders — a student scans by kind and never files anything.
 /// See docs/reference/o6u-nexus-ios.tsx SPECS.notifs.
 Future<void> showNotificationsSheet(BuildContext context) {
   return showAppBottomSheet(context, builder: (_) => const NotificationsSheet());
@@ -41,7 +41,7 @@ class NotificationsSheet extends ConsumerWidget {
                   Text('Notifications', style: text.title1),
                   const SizedBox(height: 2),
                   Text(
-                    unread > 0 ? '$unread unread Â· all from your own record' : "You're all caught up",
+                    unread > 0 ? '$unread unread · all from your own record' : "You're all caught up",
                     style: text.subhead,
                   ),
                 ],

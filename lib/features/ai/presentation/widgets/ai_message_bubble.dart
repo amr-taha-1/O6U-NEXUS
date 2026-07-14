@@ -1,4 +1,4 @@
-﻿import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../../../core/theme/theme.dart';
@@ -6,7 +6,7 @@ import '../../../../core/widgets/widgets.dart';
 import '../../../../shared/domain/ai_message.dart';
 
 /// Answers are structured: verdict first, reasoning second, evidence chips
-/// third â€” never a wall of prose. See
+/// third — never a wall of prose. See
 /// docs/reference/o6u-nexus-ios.tsx SPECS.nexus pin #1.
 class AiMessageBubble extends StatelessWidget {
   const AiMessageBubble({super.key, required this.message});

@@ -11,7 +11,7 @@ extension AssignmentStatusX on AssignmentStatus {
 }
 
 /// A single assignment on the Assignments screen. Not in the design
-/// reference — mirrors the "Materials" list pattern from
+/// reference � mirrors the "Materials" list pattern from
 /// `course_details_sheet.dart` across all of a student's courses.
 @immutable
 class Assignment {
@@ -25,7 +25,7 @@ class Assignment {
   final String title;
   final String courseCode;
 
-  /// e.g. "Due Sunday", "Graded Â· A-".
+  /// e.g. "Due Sunday", "Graded · A-".
   final String dueLabel;
   final AssignmentStatus status;
 }

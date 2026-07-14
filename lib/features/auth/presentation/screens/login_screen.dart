@@ -1,4 +1,4 @@
-﻿import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/router/app_routes.dart';
@@ -14,7 +14,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _idController = TextEditingController(text: '20211456');
-  final _pwController = TextEditingController(text: 'â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢');
+  final _pwController = TextEditingController(text: '••••••••••');
 
   @override
   void dispose() {

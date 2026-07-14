@@ -27,7 +27,22 @@ class O6uNexusApp extends ConsumerWidget {
       darkTheme: AppTheme.dark(),
       routerConfig: router,
       builder: (context, child) => ResponsiveBreakpoints.builder(
-        child: child ?? const SizedBox.shrink(),
+        // The UI language throughout is Cupertino/HIG (LargeTitleScaffold and
+        // AppPushScaffold are built on CustomScrollView/CupertinoPageScaffold,
+        // not Scaffold), so no screen provides a `Material` ancestor on its
+        // own. A handful of design-system widgets still use real Material
+        // widgets internally where there's no good Cupertino equivalent
+        // (TextField inside AppTextField/AppSearchBar, the AI chat input) —
+        // those assert a `Material` ancestor at build time. Providing one
+        // transparent `Material` here, once, at the root, is the actual fix:
+        // every screen and every modal/sheet pushed through this app's
+        // Navigator inherits it for free, instead of each widget needing its
+        // own local patch. `type: transparency` adds no fill, elevation, or
+        // ink — it does not change how anything looks.
+        child: Material(
+          type: MaterialType.transparency,
+          child: child ?? const SizedBox.shrink(),
+        ),
         breakpoints: const [
           Breakpoint(start: 0, end: AppBreakpoints.mediumWidth - 1, name: AppBreakpoints.compact),
           Breakpoint(start: AppBreakpoints.mediumWidth, end: AppBreakpoints.expandedWidth - 1, name: AppBreakpoints.medium),

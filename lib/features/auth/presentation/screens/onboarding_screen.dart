@@ -1,4 +1,4 @@
-﻿import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 
@@ -20,14 +20,14 @@ final _pages = [
     color: (c) => c.info,
     title: 'Everything campus,\nin one app.',
     body:
-        'Grades, attendance, timetable, marketplace and the people around you â€” one login, one place, no seven tabs.',
+        'Grades, attendance, timetable, marketplace and the people around you — one login, one place, no seven tabs.',
   ),
   _OnboardingPage(
     icon: CupertinoIcons.sparkles,
     color: (c) => c.accent,
     title: 'Nexus reads\nyour record.',
     body:
-        "Not the web. Your transcript, your attendance, your deadlines â€” so the advice is about you, and it arrives before you ask.",
+        "Not the web. Your transcript, your attendance, your deadlines — so the advice is about you, and it arrives before you ask.",
   ),
   _OnboardingPage(
     icon: CupertinoIcons.shield,

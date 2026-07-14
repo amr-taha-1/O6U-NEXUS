@@ -1,4 +1,4 @@
-﻿import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -6,7 +6,7 @@ import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/widgets.dart';
 import '../../application/home_providers.dart';
 
-/// The Nexus thread â€” a hairline that only swells into a card when it has
+/// The Nexus thread — a hairline that only swells into a card when it has
 /// something actionable. Dismissing it (either button) hides it for the
 /// rest of the session. See docs/reference/o6u-nexus-ios.tsx SPECS.today
 /// pin #1.

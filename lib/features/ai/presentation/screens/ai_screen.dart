@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart' show TextField, InputDecoration, InputBorder;
+import 'package:flutter/material.dart' show Material, MaterialType, TextField, InputDecoration, InputBorder;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -165,16 +165,21 @@ class _AiScreenState extends ConsumerState<AiScreen> {
               child: Row(
                 children: [
                   Expanded(
-                    child: TextField(
-                      controller: _draftController,
-                      onSubmitted: _send,
-                      style: text.body.copyWith(fontSize: 15.5),
-                      cursorColor: colors.accent,
-                      decoration: InputDecoration(
-                        isDense: true,
-                        border: InputBorder.none,
-                        hintText: 'Ask Nexus…',
-                        hintStyle: text.body.copyWith(color: colors.textDim, fontSize: 15.5),
+                    // Local `Material` wrap for the same reason as
+                    // AppSearchBar/AppTextField — see core/widgets/app_search_bar.dart.
+                    child: Material(
+                      type: MaterialType.transparency,
+                      child: TextField(
+                        controller: _draftController,
+                        onSubmitted: _send,
+                        style: text.body.copyWith(fontSize: 15.5),
+                        cursorColor: colors.accent,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          border: InputBorder.none,
+                          hintText: 'Ask Nexus…',
+                          hintStyle: text.body.copyWith(color: colors.textDim, fontSize: 15.5),
+                        ),
                       ),
                     ),
                   ),

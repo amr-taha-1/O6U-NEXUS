@@ -8,7 +8,7 @@ import '../../../../shared/data/student_repository.dart';
 import '../../../../shared/domain/course.dart';
 import '../../application/academics_providers.dart';
 
-/// Semester and cumulative GPA, side by side — nothing else. Ports the
+/// Semester and cumulative GPA, side by side � nothing else. Ports the
 /// reference's `Grades` component (SPECS.grades). Also where a student
 /// checks their GPA in general; there's no separate GPA screen.
 class GradesScreen extends ConsumerWidget {
@@ -101,7 +101,7 @@ class _GradeRow extends StatelessWidget {
               children: [
                 Text(course.name, style: text.bodyEmphasized.copyWith(fontSize: 15)),
                 const SizedBox(height: 1),
-                Text('${course.code} Â· ${course.creditHours} credit hours', style: text.footnote),
+                Text('${course.code} · ${course.creditHours} credit hours', style: text.footnote),
               ],
             ),
           ),

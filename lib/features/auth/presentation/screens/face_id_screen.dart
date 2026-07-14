@@ -1,4 +1,4 @@
-﻿import 'dart:ui';
+import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -76,10 +76,10 @@ class _FaceIdScreenState extends ConsumerState<FaceIdScreen> {
                     ),
                   ),
                   const SizedBox(height: 26),
-                  Text(_done ? 'Face ID Â· $firstName' : 'Look at iPhone', style: text.title3),
+                  Text(_done ? 'Face ID · $firstName' : 'Look at iPhone', style: text.title3),
                   const SizedBox(height: 6),
                   Text(
-                    _done ? 'Unlocking your recordâ€¦' : 'Authenticating with the Secure Enclave',
+                    _done ? 'Unlocking your record…' : 'Authenticating with the Secure Enclave',
                     style: text.callout,
                     textAlign: TextAlign.center,
                   ),

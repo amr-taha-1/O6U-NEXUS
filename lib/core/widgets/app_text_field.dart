@@ -41,21 +41,27 @@ class AppTextField extends StatelessWidget {
             Icon(icon, size: 17, color: colors.textDim),
             const SizedBox(width: 11),
             Expanded(
-              child: TextField(
-                controller: controller,
-                obscureText: obscureText,
-                keyboardType: keyboardType,
-                autofocus: autofocus,
-                onChanged: onChanged,
-                style: context.textStyles.body.copyWith(color: colors.textPrimary, fontSize: 16.5),
-                cursorColor: colors.accent,
-                textAlignVertical: TextAlignVertical.center,
-                decoration: InputDecoration(
-                  isDense: true,
-                  border: InputBorder.none,
-                  hintText: hintText,
-                  hintStyle: context.textStyles.body.copyWith(color: colors.textDim, fontSize: 16.5),
-                  contentPadding: EdgeInsets.zero,
+              // See the matching comment in app_search_bar.dart: this local
+              // `Material` wrap makes the widget self-sufficient regardless of
+              // host context, alongside the app-wide one in main.dart.
+              child: Material(
+                type: MaterialType.transparency,
+                child: TextField(
+                  controller: controller,
+                  obscureText: obscureText,
+                  keyboardType: keyboardType,
+                  autofocus: autofocus,
+                  onChanged: onChanged,
+                  style: context.textStyles.body.copyWith(color: colors.textPrimary, fontSize: 16.5),
+                  cursorColor: colors.accent,
+                  textAlignVertical: TextAlignVertical.center,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    border: InputBorder.none,
+                    hintText: hintText,
+                    hintStyle: context.textStyles.body.copyWith(color: colors.textDim, fontSize: 16.5),
+                    contentPadding: EdgeInsets.zero,
+                  ),
                 ),
               ),
             ),

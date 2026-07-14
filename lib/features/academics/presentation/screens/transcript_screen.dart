@@ -8,7 +8,7 @@ import '../../../../shared/data/student_repository.dart';
 import '../../../../shared/domain/semester.dart';
 
 /// The official record, and a way to hand it to someone. Ports the
-/// reference's `Transcript` component (SPECS.transcript) — cumulative GPA
+/// reference's `Transcript` component (SPECS.transcript) � cumulative GPA
 /// sits above the semesters, and export is a single, registrar-sealed
 /// button. No backend, so export is simulated.
 class TranscriptScreen extends ConsumerWidget {
@@ -34,7 +34,7 @@ class TranscriptScreen extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Cumulative Â· ${student.creditHoursCompleted} of ${student.creditHoursTotal} hours',
+                    'Cumulative · ${student.creditHoursCompleted} of ${student.creditHoursTotal} hours',
                     style: text.subhead,
                   ),
                   const SizedBox(height: 3),
@@ -73,7 +73,7 @@ class TranscriptScreen extends ConsumerWidget {
               expand: true,
               onPressed: () => AppSnackbar.show(
                 context,
-                message: 'Export simulated Â· no backend in this build.',
+                message: 'Export simulated · no backend in this build.',
               ),
             ),
           ),

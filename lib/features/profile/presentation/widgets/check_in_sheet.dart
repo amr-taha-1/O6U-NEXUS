@@ -1,4 +1,4 @@
-﻿import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../../../core/theme/theme.dart';
@@ -9,7 +9,7 @@ Future<void> showCheckInSheet(BuildContext context) {
 }
 
 /// Geo-fenced lecture check-in. "The code only works from here, during the
-/// session" â€” see docs/reference/o6u-nexus-ios.tsx `ScanSheet`.
+/// session" — see docs/reference/o6u-nexus-ios.tsx `ScanSheet`.
 class CheckInSheet extends StatefulWidget {
   const CheckInSheet({super.key});
 
@@ -56,7 +56,7 @@ class _CheckInSheetState extends State<CheckInSheet> {
             padding: const EdgeInsets.symmetric(horizontal: 14),
             child: Text(
               _done
-                  ? 'CS402 Â· 10:32 Â· Hall B2. Your attendance is now 96%. The lecturer sees it instantly.'
+                  ? 'CS402 · 10:32 · Hall B2. Your attendance is now 96%. The lecturer sees it instantly.'
                   : "You're inside Hall B2 and the lecture is running. The code only works from here, during the session.",
               style: text.callout,
               textAlign: TextAlign.center,

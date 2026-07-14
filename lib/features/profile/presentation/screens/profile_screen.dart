@@ -1,4 +1,4 @@
-﻿import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -44,21 +44,21 @@ class ProfileScreen extends ConsumerWidget {
                     icon: CupertinoIcons.qrcode_viewfinder,
                     iconColor: colors.success,
                     title: 'Check in to a lecture',
-                    subtitle: 'Geo-fenced Â· Hall B2 in range',
+                    subtitle: 'Geo-fenced · Hall B2 in range',
                     onTap: () => showCheckInSheet(context),
                   ),
                   NavRowCard(
                     icon: CupertinoIcons.creditcard,
                     iconColor: colors.info,
                     title: 'Campus wallet',
-                    subtitle: '${student.walletBalanceEgp.toStringAsFixed(0)} EGP Â· top up at any gate',
+                    subtitle: '${student.walletBalanceEgp.toStringAsFixed(0)} EGP · top up at any gate',
                     showChevron: false,
                   ),
                   NavRowCard(
                     icon: CupertinoIcons.bookmark,
                     iconColor: colors.accent,
                     title: 'Saved listings',
-                    subtitle: '3 items Â· 1 price drop',
+                    subtitle: '3 items · 1 price drop',
                     showChevron: false,
                   ),
                 ],
@@ -113,7 +113,7 @@ class ProfileScreen extends ConsumerWidget {
               icon: CupertinoIcons.bell,
               iconColor: colors.warning,
               title: 'Notifications',
-              subtitle: unread > 0 ? '$unread unread Â· quiet hours 23:00â€“07:00' : 'Quiet hours 23:00â€“07:00',
+              subtitle: unread > 0 ? '$unread unread · quiet hours 23:00–07:00' : 'Quiet hours 23:00–07:00',
               onTap: () => showNotificationsSheet(context),
             ),
           ),
@@ -133,7 +133,7 @@ class ProfileScreen extends ConsumerWidget {
                         Text('No lecturer or administrator can read your Nexus conversations.', style: text.bodyEmphasized.copyWith(fontSize: 14.5)),
                         const SizedBox(height: 5),
                         Text(
-                          'The university only ever sees anonymised, aggregated numbers. Your password is never stored â€” the portal is reached with a short-lived token.',
+                          'The university only ever sees anonymised, aggregated numbers. Your password is never stored — the portal is reached with a short-lived token.',
                           style: text.footnote.copyWith(fontSize: 13.5, height: 1.45),
                         ),
                         const SizedBox(height: 11),

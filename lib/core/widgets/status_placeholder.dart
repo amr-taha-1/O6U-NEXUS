@@ -1,4 +1,4 @@
-﻿import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../theme/theme.dart';
 import 'app_button.dart';
@@ -6,7 +6,7 @@ import 'app_button.dart';
 enum StatusPlaceholderKind { empty, error, success }
 
 /// Full-bleed placeholder for "nothing here yet," "something went wrong,"
-/// and "done" states â€” the reference prototype's zero-message Nexus screen
+/// and "done" states — the reference prototype's zero-message Nexus screen
 /// and check-in success screen generalized into one reusable widget.
 class StatusPlaceholder extends StatelessWidget {
   const StatusPlaceholder({

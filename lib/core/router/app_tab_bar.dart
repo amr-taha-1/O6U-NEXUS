@@ -1,4 +1,4 @@
-﻿import 'dart:ui';
+import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 
@@ -20,7 +20,7 @@ const List<AppTabItem> kAppTabs = [
   AppTabItem(icon: CupertinoIcons.person_crop_circle, label: 'Profile'),
 ];
 
-/// The five-tab glass bottom bar â€” ports the reference's `TabBar` component,
+/// The five-tab glass bottom bar — ports the reference's `TabBar` component,
 /// including the AI tab's purple glow when active and alert dot when it has
 /// something to say and isn't the active tab.
 class AppTabBar extends StatelessWidget {

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -74,7 +74,7 @@ class AcademicsScreen extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Level ${student.level} Â· ${student.creditHoursCompleted} of ${student.creditHoursTotal} hours',
+                        'Level ${student.level} · ${student.creditHoursCompleted} of ${student.creditHoursTotal} hours',
                         style: text.footnote,
                       ),
                       Text(
@@ -112,14 +112,14 @@ class AcademicsScreen extends ConsumerWidget {
                     icon: CupertinoIcons.calendar,
                     iconColor: colors.info,
                     title: 'Schedule',
-                    subtitle: 'Week 9 Â· 2 rooms changed',
+                    subtitle: 'Week 9 · 2 rooms changed',
                     onTap: () => context.push(AppRoutes.academicsSchedule),
                   ),
                   NavRowCard(
                     icon: CupertinoIcons.timer,
                     iconColor: colors.due,
                     title: 'Exam Schedule',
-                    subtitle: 'Next: MA201 midterm Â· 3 days',
+                    subtitle: 'Next: MA201 midterm · 3 days',
                     onTap: () => context.push(AppRoutes.academicsExams),
                   ),
                   NavRowCard(
@@ -133,28 +133,28 @@ class AcademicsScreen extends ConsumerWidget {
                     icon: CupertinoIcons.doc_checkmark,
                     iconColor: colors.success,
                     title: 'Assignments',
-                    subtitle: '1 due Sunday Â· CS402',
+                    subtitle: '1 due Sunday · CS402',
                     onTap: () => context.push(AppRoutes.academicsAssignments),
                   ),
                   NavRowCard(
                     icon: CupertinoIcons.gauge,
                     iconColor: colors.success,
                     title: 'Attendance',
-                    subtitle: '92% Â· one course below the line',
+                    subtitle: '92% · one course below the line',
                     onTap: () => context.push(AppRoutes.academicsAttendance),
                   ),
                   NavRowCard(
                     icon: CupertinoIcons.doc_text,
                     iconColor: colors.info,
                     title: 'Transcript',
-                    subtitle: 'Official Â· exportable as PDF',
+                    subtitle: 'Official · exportable as PDF',
                     onTap: () => context.push(AppRoutes.academicsTranscript),
                   ),
                   NavRowCard(
                     icon: CupertinoIcons.flag,
                     iconColor: colors.warning,
                     title: 'Graduation Progress',
-                    subtitle: '96% on-time Â· Aug 2027',
+                    subtitle: '96% on-time · Aug 2027',
                     onTap: () => context.push(AppRoutes.academicsGraduation),
                   ),
                 ],
@@ -197,8 +197,8 @@ class _CourseRow extends StatelessWidget {
                   const SizedBox(height: 1),
                   Text(
                     course.isAttendanceAtRisk
-                        ? '${course.code} Â· below the 75% threshold'
-                        : '${course.code} Â· ${course.creditHours} credit hours',
+                        ? '${course.code} · below the 75% threshold'
+                        : '${course.code} · ${course.creditHours} credit hours',
                     style: text.footnote.copyWith(color: course.isAttendanceAtRisk ? colors.warning : colors.textMuted),
                   ),
                 ],
