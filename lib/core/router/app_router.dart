@@ -2,6 +2,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/academics/presentation/screens/academics_screen.dart';
+import '../../features/academics/presentation/screens/assignments_screen.dart';
+import '../../features/academics/presentation/screens/attendance_screen.dart';
+import '../../features/academics/presentation/screens/exam_schedule_screen.dart';
+import '../../features/academics/presentation/screens/grades_screen.dart';
+import '../../features/academics/presentation/screens/graduation_screen.dart';
+import '../../features/academics/presentation/screens/schedule_screen.dart';
+import '../../features/academics/presentation/screens/transcript_screen.dart';
 import '../../features/ai/presentation/screens/ai_screen.dart';
 import '../../features/auth/presentation/screens/face_id_screen.dart';
 import '../../features/auth/presentation/screens/forgot_password_screen.dart';
@@ -49,7 +56,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: AppRoutes.academics,
                 builder: (context, state) => const AcademicsScreen(),
-                routes: const [],
+                routes: [
+                  GoRoute(path: 'schedule', builder: (context, state) => const ScheduleScreen()),
+                  GoRoute(path: 'exams', builder: (context, state) => const ExamScheduleScreen()),
+                  GoRoute(path: 'attendance', builder: (context, state) => const AttendanceScreen()),
+                  GoRoute(path: 'grades', builder: (context, state) => const GradesScreen()),
+                  GoRoute(path: 'transcript', builder: (context, state) => const TranscriptScreen()),
+                  GoRoute(path: 'assignments', builder: (context, state) => const AssignmentsScreen()),
+                  GoRoute(path: 'graduation', builder: (context, state) => const GraduationScreen()),
+                ],
               ),
             ],
           ),
