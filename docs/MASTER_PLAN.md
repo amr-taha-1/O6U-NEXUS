@@ -90,11 +90,11 @@ Status legend: ⬜ not started · 🟨 in progress · ✅ done
 | 24 | Internships | D | ✅ |
 | 25 | Freelance | D | ✅ |
 | 26 | AI Assistant (Nexus chat) | E | ⬜ |
-| 27 | AI Study Planner | E | ⬜ |
-| 28 | AI GPA Simulator | E | ⬜ |
-| 29 | AI Graduation Planner | E | ⬜ |
-| 30 | AI Resume Builder | E | ⬜ |
-| 31 | AI Lecture Summary | E | ⬜ |
+| 27 | AI Study Planner | E | ✅ |
+| 28 | AI GPA Simulator | E | ✅ |
+| 29 | AI Graduation Planner | E | ✅ |
+| 30 | AI Resume Builder | E | ✅ |
+| 31 | AI Lecture Summary | E | ✅ |
 | 32 | Profile | F | ⬜ |
 | 33 | Student ID | F | ⬜ |
 | 34 | Settings | F | ⬜ |
