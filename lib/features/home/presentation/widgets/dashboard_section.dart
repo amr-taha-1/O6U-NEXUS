@@ -1,37 +1,26 @@
 import 'package:flutter/cupertino.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/widgets.dart';
 import '../../../../features/degree_progress/domain/degree_progress.dart';
-import '../../../../shared/domain/semester.dart';
 import '../../../../shared/domain/student.dart';
 import '../../domain/dashboard_data.dart';
 
-const _iconsByName = <String, IconData>{
-  'doc_text': CupertinoIcons.doc_text,
-  'chart_bar_alt_fill': CupertinoIcons.chart_bar_alt_fill,
-  'flag': CupertinoIcons.flag,
-  'person_crop_square': CupertinoIcons.person_crop_square,
-};
-
 /// The real-data academic summary at the top of Home: who you are, where
-/// you stand, and shortcuts into the rest of the record. Everything here
-/// comes from `assets/data/{student,dashboard,degree_progress}.json` and
-/// the transcript — nothing is invented in this widget.
+/// you stand. Everything here comes from
+/// `assets/data/{student,dashboard,degree_progress}.json` — nothing is
+/// invented in this widget.
 class DashboardSection extends StatelessWidget {
   const DashboardSection({
     super.key,
     required this.student,
     required this.dashboard,
     required this.degreeProgress,
-    required this.mostRecentSemester,
   });
 
   final Student student;
   final DashboardData dashboard;
   final DegreeProgress degreeProgress;
-  final Semester? mostRecentSemester;
 
   @override
   Widget build(BuildContext context) {
@@ -47,38 +36,6 @@ class DashboardSection extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
           child: _StatRow(student: student, degreeProgress: degreeProgress),
         ),
-        const SizedBox(height: 4),
-        SizedBox(
-          height: 44,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin, vertical: 4),
-            itemCount: dashboard.quickActions.length,
-            separatorBuilder: (_, _) => const SizedBox(width: 9),
-            itemBuilder: (context, i) {
-              final action = dashboard.quickActions[i];
-              return AppCard(
-                padding: const EdgeInsets.symmetric(horizontal: 13),
-                onTap: () => context.push(action.route),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(_iconsByName[action.iconName] ?? CupertinoIcons.square, size: 15, color: context.colors.accent),
-                    const SizedBox(width: 8),
-                    Text(action.label, style: context.textStyles.bodyEmphasized.copyWith(fontSize: 13.5)),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-        if (mostRecentSemester != null) ...[
-          const SizedBox(height: 4),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
-            child: _RecentSummaryCard(semester: mostRecentSemester!),
-          ),
-        ],
       ],
     );
   }
@@ -199,43 +156,6 @@ class _StatTile extends StatelessWidget {
           Text(value, style: text.title2.copyWith(color: color, fontSize: valueFontSize, letterSpacing: -0.3)),
           const SizedBox(height: 2),
           Text(sub, style: text.caption1.copyWith(color: colors.textDim, fontWeight: FontWeight.w400, fontSize: 11)),
-        ],
-      ),
-    );
-  }
-}
-
-class _RecentSummaryCard extends StatelessWidget {
-  const _RecentSummaryCard({required this.semester});
-  final Semester semester;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    final text = context.textStyles;
-    return AppCard(
-      onTap: () => context.push('/academics/transcript'),
-      child: Row(
-        children: [
-          Container(
-            width: 30,
-            height: 30,
-            decoration: BoxDecoration(color: AppColors.tint(colors.accent, 0.16), borderRadius: AppRadius.smRadius),
-            alignment: Alignment.center,
-            child: Icon(CupertinoIcons.clock, size: 15, color: colors.accent),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('Most recent semester', style: text.footnote.copyWith(fontSize: 11.5)),
-                Text('${semester.label} · GPA ${semester.gpa.toStringAsFixed(2)}', style: text.bodyEmphasized.copyWith(fontSize: 14.5)),
-              ],
-            ),
-          ),
-          Icon(CupertinoIcons.chevron_forward, size: 16, color: colors.textDim),
         ],
       ),
     );

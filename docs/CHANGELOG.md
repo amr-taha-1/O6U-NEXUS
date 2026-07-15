@@ -5,6 +5,13 @@ All notable changes to O6U Nexus are recorded here. Format loosely follows
 
 ## [Unreleased]
 
+### Removed — Home quick actions and recent-semester card
+- Removed the Transcript/Analytics/Degree Progress quick-action row and the "Most recent semester"
+  card from Home's dashboard summary.
+- `DashboardData` simplified to just `greetingName` — `QuickAction` and `assets/data/dashboard.json`'s
+  `quickActions` array are gone with it, since nothing reads them anymore. Home no longer needs
+  `transcriptProvider` at all (it only existed to find the most recent semester).
+
 ### Added — Class-reminder notifications
 - `core/services/class_notification_scheduler.dart` (`flutter_local_notifications` + `timezone`):
   schedules a local notification for every real class session (`features/schedule/`) at each

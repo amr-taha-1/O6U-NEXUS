@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/widgets.dart';
 import '../../../../features/degree_progress/data/degree_progress_repository.dart';
-import '../../../../features/transcript/data/transcript_repository.dart';
 import '../../../../shared/application/notifications_controller.dart';
 import '../../../../shared/data/student_repository.dart';
 import '../../../notifications/presentation/widgets/notifications_sheet.dart';
@@ -32,13 +31,11 @@ class HomeScreen extends ConsumerWidget {
     final studentAsync = ref.watch(currentStudentProvider);
     final dashboardAsync = ref.watch(dashboardDataProvider);
     final degreeProgressAsync = ref.watch(degreeProgressProvider);
-    final transcriptAsync = ref.watch(transcriptProvider);
 
     final student = studentAsync.valueOrNull;
     final dashboard = dashboardAsync.valueOrNull;
     final degreeProgress = degreeProgressAsync.valueOrNull;
-    final semesters = transcriptAsync.valueOrNull;
-    final dashboardReady = student != null && dashboard != null && degreeProgress != null && semesters != null;
+    final dashboardReady = student != null && dashboard != null && degreeProgress != null;
     final dashboardFailed = studentAsync.hasError || dashboardAsync.hasError || degreeProgressAsync.hasError;
 
     return LargeTitleScaffold(
@@ -74,7 +71,6 @@ class HomeScreen extends ConsumerWidget {
               student: student,
               dashboard: dashboard,
               degreeProgress: degreeProgress,
-              mostRecentSemester: semesters.isEmpty ? null : semesters.last,
             )
           else if (dashboardFailed)
             Padding(

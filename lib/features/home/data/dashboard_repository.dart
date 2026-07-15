@@ -5,7 +5,7 @@ import '../domain/dashboard_data.dart';
 
 const _assetPath = 'assets/data/dashboard.json';
 
-/// Reads the Home dashboard's own config (greeting, quick actions) from
+/// Reads the Home dashboard's own config (greeting) from
 /// `assets/data/dashboard.json` — see the note on `StudentRepository` re:
 /// temporary local data source.
 class DashboardRepository {
@@ -13,18 +13,7 @@ class DashboardRepository {
 
   Future<DashboardData> getDashboardData() async {
     final json = await JsonAssetLoader.loadObject(_assetPath);
-    final actions = json['quickActions'] as List<dynamic>;
-    return DashboardData(
-      greetingName: json['greetingName'] as String,
-      quickActions: [
-        for (final a in actions)
-          QuickAction(
-            label: (a as Map<String, dynamic>)['label'] as String,
-            iconName: a['iconName'] as String,
-            route: a['route'] as String,
-          ),
-      ],
-    );
+    return DashboardData(greetingName: json['greetingName'] as String);
   }
 }
 
