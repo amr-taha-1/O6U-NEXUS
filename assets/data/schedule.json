@@ -1,0 +1,45 @@
+{
+  "source": "V5-Summer Term ALL Levels- 2025-2026.pdf, Faculty of Computer Science and Information Systems — filtered to the student's own registered summer courses and confirmed sections",
+  "sessions": [
+    {
+      "courseCode": "ISE326A",
+      "courseName": "Geographic Information System",
+      "type": "lab",
+      "day": "sunday",
+      "startTime": "10:30",
+      "endTime": "11:20",
+      "room": "6301",
+      "instructor": null
+    },
+    {
+      "courseCode": "ISE326A",
+      "courseName": "Geographic Information System",
+      "type": "lecture",
+      "day": "thursday",
+      "startTime": "10:30",
+      "endTime": "11:20",
+      "room": "6204",
+      "instructor": null
+    },
+    {
+      "courseCode": "ISM424",
+      "courseName": "Knowledge Management",
+      "type": "lecture",
+      "day": "monday",
+      "startTime": "12:30",
+      "endTime": "13:20",
+      "room": "6019",
+      "instructor": "د. محمد عيسى"
+    },
+    {
+      "courseCode": "ISM424",
+      "courseName": "Knowledge Management",
+      "type": "lab",
+      "day": "tuesday",
+      "startTime": "12:30",
+      "endTime": "13:20",
+      "room": "6117",
+      "instructor": "م.م. شادي بدير"
+    }
+  ]
+}

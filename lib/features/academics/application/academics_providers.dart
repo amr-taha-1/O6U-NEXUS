@@ -1,8 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/theme/theme.dart';
-import '../../../shared/domain/domain.dart';
 import '../domain/assignment.dart';
 import '../domain/exam.dart';
 
@@ -10,60 +7,9 @@ import '../domain/exam.dart';
 /// small enough, and specific enough to a single screen, that a repository
 /// indirection would add no value — same call as
 /// `features/home/application/home_providers.dart`'s `todayScheduleProvider`.
-
-/// One tile in the Schedule screen's week strip.
-class WeekDay {
-  const WeekDay({required this.label, required this.date, required this.isToday});
-  final String label;
-  final int date;
-  final bool isToday;
-}
-
-final weekStripProvider = Provider<List<WeekDay>>((ref) {
-  const labels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-  return [for (var i = 0; i < labels.length; i++) WeekDay(label: labels[i], date: 11 + i, isToday: i == 1)];
-});
-
-/// The week's day rows, reusing [ScheduleItem]'s shape (see
-/// `home_providers.dart`'s `todayScheduleProvider`) even though the
-/// Schedule screen renders it with an accent bar rather than a dot timeline.
-final weekScheduleProvider = Provider<List<ScheduleItem>>((ref) {
-  final c = AppColors.dark;
-  return [
-    ScheduleItem(
-      time: '09:00',
-      title: 'EN102 · Technical Writing',
-      meta: 'Hall D3 · Dr. Nadia',
-      accent: c.info,
-      icon: CupertinoIcons.book,
-      kind: ScheduleItemKind.lecture,
-    ),
-    ScheduleItem(
-      time: '10:30',
-      title: 'CS402 · Data Structures',
-      meta: 'Hall A1 · moved · Dr. Hesham',
-      accent: c.accent,
-      icon: CupertinoIcons.book,
-      kind: ScheduleItemKind.lecture,
-    ),
-    ScheduleItem(
-      time: '12:30',
-      title: 'Free · Nexus placed revision',
-      meta: 'Library Room 4',
-      accent: c.success,
-      icon: CupertinoIcons.sparkles,
-      kind: ScheduleItemKind.freeBlock,
-    ),
-    ScheduleItem(
-      time: '15:30',
-      title: 'MA201 · Lab',
-      meta: 'Lab 4 · Eng. Omar',
-      accent: c.warning,
-      icon: CupertinoIcons.exclamationmark_triangle,
-      kind: ScheduleItemKind.lab,
-    ),
-  ];
-});
+///
+/// The Schedule screen itself reads real data now — see
+/// `features/schedule/`.
 
 /// This semester's GPA — distinct from the student's cumulative GPA.
 final semesterGpaProvider = Provider<double>((ref) => 3.24);

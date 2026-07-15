@@ -3,142 +3,206 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/widgets.dart';
-import '../../../../shared/domain/schedule_item.dart';
-import '../../application/academics_providers.dart';
+import '../../../../features/schedule/application/schedule_providers.dart';
+import '../../../../features/schedule/domain/schedule_session.dart';
 
-/// The week, with the room changes already applied. Ports the reference's
-/// `Schedule` component (SPECS.schedule) — the week strip pins today, and
-/// free hours are drawn as blocks Nexus already filled.
+/// The real weekly Summer-term schedule (`assets/data/schedule.json`) —
+/// filtered to the student's own registered courses. Lecture vs. Lab is the
+/// department's own rule for reading an instructor's title (see
+/// `SessionType` doc comment): each gets a distinct icon and color, never
+/// interchangeable. See docs/Architecture.md "Real data".
 class ScheduleScreen extends ConsumerWidget {
   const ScheduleScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colors = context.colors;
-    final text = context.textStyles;
-    final days = ref.watch(weekStripProvider);
-    final rows = ref.watch(weekScheduleProvider);
+    final weeklyAsync = ref.watch(weeklyScheduleProvider);
+    final nextAsync = ref.watch(nextSessionProvider);
+    final minutesUntilAsync = ref.watch(minutesUntilNextSessionProvider);
 
     return AppPushScaffold(
       title: 'Schedule',
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
-            child: Row(
-              children: [
-                for (var i = 0; i < days.length; i++) ...[
-                  Expanded(child: _WeekDayTile(day: days[i])),
-                  if (i < days.length - 1) const SizedBox(width: 6),
-                ],
-              ],
-            ),
+      body: weeklyAsync.when(
+        data: (byDay) => _ScheduleBody(
+          byDay: byDay,
+          next: nextAsync.valueOrNull,
+          minutesUntilNext: minutesUntilAsync.valueOrNull,
+        ),
+        loading: () => const Padding(
+          padding: EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+          child: Column(
+            children: [
+              SkeletonBox(height: 90, borderRadius: BorderRadius.all(Radius.circular(18))),
+              SizedBox(height: 12),
+              SkeletonListTile(isFirst: true),
+              SkeletonListTile(),
+            ],
           ),
-          const SizedBox(height: 18),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
-            child: Column(children: [for (final row in rows) _ScheduleRow(item: row)]),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
-            child: AppCard(
-              dashed: true,
-              child: Row(
-                children: [
-                  Icon(CupertinoIcons.calendar, size: 16, color: colors.info),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      'Two rooms changed this week. Your timetable updated itself.',
-                      style: text.subhead.copyWith(fontSize: 13.5),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
+        ),
+        error: (error, stackTrace) => StatusPlaceholder.error(message: 'Couldn\'t load your schedule: $error'),
       ),
     );
   }
 }
 
-class _WeekDayTile extends StatelessWidget {
-  const _WeekDayTile({required this.day});
-  final WeekDay day;
+class _ScheduleBody extends StatelessWidget {
+  const _ScheduleBody({required this.byDay, required this.next, required this.minutesUntilNext});
+  final Map<Weekday, List<ScheduleSession>> byDay;
+  final ScheduleSession? next;
+  final int? minutesUntilNext;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (next != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+            child: _NextClassCard(session: next!, minutesUntil: minutesUntilNext),
+          ),
+        const SectionHeader('This week'),
+        for (final day in weekdayOrder)
+          if (byDay[day]!.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+              child: _DaySection(day: day, sessions: byDay[day]!),
+            ),
+      ],
+    );
+  }
+}
+
+class _NextClassCard extends StatelessWidget {
+  const _NextClassCard({required this.session, required this.minutesUntil});
+  final ScheduleSession session;
+  final int? minutesUntil;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
     final text = context.textStyles;
-    final on = day.isToday;
-    return Container(
-      constraints: const BoxConstraints(minHeight: 44),
-      padding: const EdgeInsets.symmetric(vertical: 9),
-      decoration: BoxDecoration(
-        color: on ? colors.accentDeep : colors.surface,
-        borderRadius: AppRadius.mdRadius,
-        border: on ? null : Border.all(color: colors.hairline, width: 0.5),
+    final style = _typeStyle(colors, session.type);
+
+    return AppCard(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [AppColors.tint(style.color, 0.22), colors.surface],
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            day.label,
-            style: text.caption1.copyWith(color: on ? colors.onAccent.withValues(alpha: 0.75) : colors.textDim, fontSize: 11),
-          ),
-          const SizedBox(height: 3),
-          Text(
-            '${day.date}',
-            style: text.monoSmall.copyWith(color: on ? colors.onAccent : colors.textPrimary, fontSize: 14),
+          Icon(style.icon, size: 22, color: style.color),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('NEXT ${style.label.toUpperCase()}', style: text.caption2.copyWith(color: style.color, letterSpacing: 0.7)),
+                const SizedBox(height: 3),
+                Text(session.courseName, style: text.title3.copyWith(fontSize: 18)),
+                const SizedBox(height: 2),
+                Text(
+                  '${session.day.label} · ${session.timeRangeLabel} · Room ${session.room}',
+                  style: text.subhead.copyWith(fontSize: 13),
+                ),
+                if (minutesUntil != null) ...[
+                  const SizedBox(height: 6),
+                  Text(_untilLabel(minutesUntil!), style: text.footnote.copyWith(color: colors.textDim)),
+                ],
+              ],
+            ),
           ),
         ],
       ),
     );
   }
+
+  String _untilLabel(int minutes) {
+    if (minutes < 60) return 'In $minutes min';
+    final hours = minutes ~/ 60;
+    final mins = minutes % 60;
+    if (hours < 24) return 'In ${hours}h ${mins}m';
+    final days = hours ~/ 24;
+    return 'In $days ${days == 1 ? 'day' : 'days'}';
+  }
 }
 
-class _ScheduleRow extends StatelessWidget {
-  const _ScheduleRow({required this.item});
-  final ScheduleItem item;
+class _DaySection extends StatelessWidget {
+  const _DaySection({required this.day, required this.sessions});
+  final Weekday day;
+  final List<ScheduleSession> sessions;
 
   @override
   Widget build(BuildContext context) {
     final text = context.textStyles;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(
-              width: 46,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 13),
-                child: Text(item.time, textAlign: TextAlign.right, style: text.monoMicro.copyWith(fontSize: 12)),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Container(width: 3, decoration: BoxDecoration(color: item.accent, borderRadius: BorderRadius.circular(3))),
-            const SizedBox(width: 12),
-            Expanded(
-              child: AppCard(
-                padding: const EdgeInsets.all(14),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(item.title, style: text.bodyEmphasized.copyWith(fontSize: 15)),
-                    const SizedBox(height: 2),
-                    Text(item.meta, style: text.subhead.copyWith(fontSize: 13)),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+      padding: const EdgeInsets.only(bottom: 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(day.label, style: text.bodyEmphasized.copyWith(fontSize: 14.5)),
+          const SizedBox(height: 8),
+          for (final session in sessions) Padding(padding: const EdgeInsets.only(bottom: 8), child: _SessionCard(session: session)),
+        ],
       ),
     );
   }
 }
+
+class _SessionCard extends StatelessWidget {
+  const _SessionCard({required this.session});
+  final ScheduleSession session;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final text = context.textStyles;
+    final style = _typeStyle(colors, session.type);
+
+    return AppCard(
+      padding: const EdgeInsets.all(13),
+      child: Row(
+        children: [
+          Container(
+            width: 34,
+            height: 34,
+            decoration: BoxDecoration(color: AppColors.tint(style.color, 0.16), borderRadius: AppRadius.smRadius),
+            alignment: Alignment.center,
+            child: Icon(style.icon, size: 16, color: style.color),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(session.courseName, style: text.bodyEmphasized.copyWith(fontSize: 14.5)),
+                const SizedBox(height: 1),
+                Text(
+                  '${session.courseCode} · ${session.timeRangeLabel} · Room ${session.room}',
+                  style: text.footnote,
+                ),
+              ],
+            ),
+          ),
+          TagChip(label: style.label, color: style.color),
+        ],
+      ),
+    );
+  }
+}
+
+class _TypeStyle {
+  const _TypeStyle({required this.label, required this.icon, required this.color});
+  final String label;
+  final IconData icon;
+  final Color color;
+}
+
+_TypeStyle _typeStyle(AppColors colors, SessionType type) => switch (type) {
+  SessionType.lecture => _TypeStyle(label: 'Lecture', icon: CupertinoIcons.book, color: colors.info),
+  SessionType.lab => _TypeStyle(label: 'Lab', icon: CupertinoIcons.lab_flask, color: colors.warning),
+};

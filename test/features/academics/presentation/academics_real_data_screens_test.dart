@@ -4,11 +4,14 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:o6u_nexus/core/theme/theme.dart';
 import 'package:o6u_nexus/features/academics/presentation/screens/graduation_screen.dart';
+import 'package:o6u_nexus/features/academics/presentation/screens/schedule_screen.dart';
 import 'package:o6u_nexus/features/academics/presentation/screens/transcript_screen.dart';
 import 'package:o6u_nexus/features/curriculum/application/curriculum_engine.dart';
 import 'package:o6u_nexus/features/curriculum/data/curriculum_repository.dart';
 import 'package:o6u_nexus/features/curriculum/presentation/screens/course_catalog_screen.dart';
 import 'package:o6u_nexus/features/degree_progress/data/degree_progress_repository.dart';
+import 'package:o6u_nexus/features/schedule/application/schedule_providers.dart';
+import 'package:o6u_nexus/features/schedule/data/schedule_repository.dart';
 import 'package:o6u_nexus/features/transcript/data/transcript_repository.dart';
 import 'package:o6u_nexus/shared/data/student_repository.dart';
 
@@ -34,6 +37,10 @@ void main() {
     await _container.read(minCreditHoursForGraduationProjectProvider.future);
     await _container.read(courseEligibilityProvider.future);
     await _container.read(estimatedRemainingSemestersProvider.future);
+    await _container.read(scheduleProvider.future);
+    await _container.read(weeklyScheduleProvider.future);
+    await _container.read(nextSessionProvider.future);
+    await _container.read(minutesUntilNextSessionProvider.future);
   });
 
   tearDownAll(() {
@@ -63,6 +70,17 @@ void main() {
     expect(find.text('Degree Progress'), findsWidgets);
     expect(find.textContaining('Department Mandatory'), findsOneWidget);
     expect(find.textContaining('91 of 144 hours'), findsOneWidget);
+  });
+
+  testWidgets('ScheduleScreen renders the real weekly timetable with lecture/lab distinction', (tester) async {
+    await pumpReady(tester, const ScheduleScreen());
+    expect(find.text('Schedule'), findsWidgets);
+    // Both registered courses appear (each has a lecture + a lab session).
+    expect(find.text('Geographic Information System'), findsWidgets);
+    expect(find.text('Knowledge Management'), findsWidgets);
+    expect(find.text('Sunday'), findsOneWidget);
+    expect(find.text('Lecture'), findsWidgets);
+    expect(find.text('Lab'), findsWidgets);
   });
 
   testWidgets('CourseCatalogScreen computes real eligibility from the transcript and bylaw', (tester) async {

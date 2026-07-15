@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/widgets.dart';
+import '../../../../features/schedule/application/schedule_providers.dart';
+import '../../../../features/schedule/domain/schedule_session.dart';
 import '../../../../features/transcript/data/transcript_repository.dart';
 import '../../../../shared/data/course_repository.dart';
 import '../../../../shared/data/student_repository.dart';
@@ -22,11 +24,12 @@ class AcademicsScreen extends ConsumerWidget {
     final studentAsync = ref.watch(currentStudentProvider);
     final courses = ref.watch(coursesProvider);
     final gpaTrend = ref.watch(semesterGpaTrendProvider).valueOrNull ?? const [];
+    final nextSession = ref.watch(nextSessionProvider).valueOrNull;
 
     return LargeTitleScaffold(
       title: 'Academics',
       body: studentAsync.when(
-        data: (student) => _AcademicsBody(student: student, courses: courses, gpaTrend: gpaTrend),
+        data: (student) => _AcademicsBody(student: student, courses: courses, gpaTrend: gpaTrend, nextSession: nextSession),
         loading: () => const Padding(
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
           child: SkeletonListTile(isFirst: true),
@@ -38,10 +41,11 @@ class AcademicsScreen extends ConsumerWidget {
 }
 
 class _AcademicsBody extends StatelessWidget {
-  const _AcademicsBody({required this.student, required this.courses, required this.gpaTrend});
+  const _AcademicsBody({required this.student, required this.courses, required this.gpaTrend, required this.nextSession});
   final Student student;
   final List<Course> courses;
   final List<double> gpaTrend;
+  final ScheduleSession? nextSession;
 
   @override
   Widget build(BuildContext context) {
@@ -147,7 +151,9 @@ class _AcademicsBody extends StatelessWidget {
                   icon: CupertinoIcons.calendar,
                   iconColor: colors.info,
                   title: 'Schedule',
-                  subtitle: 'Week 9 · 2 rooms changed',
+                  subtitle: nextSession == null
+                      ? 'This week\'s classes'
+                      : 'Next: ${nextSession!.courseName} · ${nextSession!.day.label}',
                   onTap: () => context.push(AppRoutes.academicsSchedule),
                 ),
                 NavRowCard(

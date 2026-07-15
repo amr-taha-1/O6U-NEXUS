@@ -7,14 +7,14 @@ import 'package:o6u_nexus/features/academics/presentation/screens/assignments_sc
 import 'package:o6u_nexus/features/academics/presentation/screens/attendance_screen.dart';
 import 'package:o6u_nexus/features/academics/presentation/screens/exam_schedule_screen.dart';
 import 'package:o6u_nexus/features/academics/presentation/screens/grades_screen.dart';
-import 'package:o6u_nexus/features/academics/presentation/screens/schedule_screen.dart';
 
 /// One smoke test per Academics pushed sub-screen: pumps the widget inside a
 /// [ProviderScope] + [MaterialApp], asserts key content renders, no
 /// exceptions. See docs/Architecture.md "Testing".
 ///
-/// TranscriptScreen and GraduationScreen (real-data screens) live in their
-/// own file (academics_real_data_screens_test.dart). `flutter_test`'s
+/// TranscriptScreen, GraduationScreen, and ScheduleScreen (real-data
+/// screens) live in their own file (academics_real_data_screens_test.dart).
+/// `flutter_test`'s
 /// asset-bundle platform channel only tolerates one real disk-backed asset
 /// load per isolate — GradesScreen's real `currentStudentProvider` read
 /// would be the first, and a *second* one (Transcript/Graduation) in the
@@ -30,12 +30,6 @@ Future<void> _pump(WidgetTester tester, Widget screen) {
 }
 
 void main() {
-  testWidgets('ScheduleScreen renders the week and room-change footer', (tester) async {
-    await _pump(tester, const ScheduleScreen());
-    expect(find.text('Schedule'), findsWidgets);
-    expect(find.textContaining('Two rooms changed this week'), findsOneWidget);
-  });
-
   testWidgets('ExamScheduleScreen renders the upcoming exam list', (tester) async {
     await _pump(tester, const ExamScheduleScreen());
     expect(find.text('Exam Schedule'), findsWidgets);

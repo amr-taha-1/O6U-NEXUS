@@ -5,6 +5,24 @@ All notable changes to O6U Nexus are recorded here. Format loosely follows
 
 ## [Unreleased]
 
+### Added — Real Schedule
+- `assets/data/schedule.json` — the student's real Summer-term class meetings, filtered from the
+  department-wide timetable (`V5-Summer Term ALL Levels- 2025-2026.pdf`) down to their own three
+  registered courses and confirmed lecture/lab sections (the source PDF lists every section for
+  every level; picking the right one required asking, since guessing would have fabricated the
+  student's personal schedule).
+- New `features/schedule/`: `ScheduleRepository`/`scheduleProvider` reads it;
+  `weeklyScheduleProvider` groups by weekday, `nextSessionProvider` finds the next class
+  chronologically (today if not yet started, otherwise the next day with one, wrapping the week),
+  `minutesUntilNextSessionProvider` for a live countdown.
+- `ScheduleScreen` rebuilt on real data: a "next class" hero card and the week grouped by day.
+  Lecture vs. Lab gets a distinct icon and color everywhere (book/blue vs. flask/amber), per the
+  department's own rule for reading an instructor's title on the timetable (Dr. = Lecture,
+  Eng./Demonstrator = Lab).
+- Database Management Systems 2 (`ISM413`) isn't in `schedule.json` yet — its two Wednesday
+  sessions share a timetable block with six other Level-4 courses and the exact time split wasn't
+  confirmable from the source PDF alone; needs the student to confirm before it's added.
+
 ### Added — Curriculum engine (Course Catalog)
 - `assets/data/bylaw_information_systems.json` — the Information Systems track's full 50-course
   curriculum (code, name, credit hours, year level, category, prerequisites), transcribed from the
