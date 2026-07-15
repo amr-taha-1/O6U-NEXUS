@@ -14,7 +14,6 @@ import '../../data/dashboard_repository.dart';
 import '../widgets/dashboard_section.dart';
 import '../widgets/day_timeline.dart';
 import '../widgets/glance_grid.dart';
-import '../widgets/nexus_thread_banner.dart';
 import '../widgets/next_up_card.dart';
 
 /// Answers "what does the next hour ask of me?" before the student thinks
@@ -88,7 +87,6 @@ class HomeScreen extends ConsumerWidget {
               child: SkeletonBox(height: 150, borderRadius: AppRadius.cardRadius),
             ),
           const SizedBox(height: 4),
-          const NexusThreadBanner(),
           const NextUpCard(),
           const SectionHeader('Your day'),
           DayTimeline(items: schedule),

@@ -38,18 +38,6 @@ final nextClassCountdownProvider = Provider<String>((ref) {
   return 'in ${left}m';
 });
 
-/// Whether the Nexus thread banner is showing. Dismissing it (either
-/// action) hides it for the rest of the session — see the reference's
-/// SPECS.today pin #1.
-class NexusThreadVisibleNotifier extends Notifier<bool> {
-  @override
-  bool build() => true;
-
-  void dismiss() => state = false;
-}
-
-final nexusThreadVisibleProvider = NotifierProvider<NexusThreadVisibleNotifier, bool>(NexusThreadVisibleNotifier.new);
-
 final todayScheduleProvider = Provider<List<ScheduleItem>>((ref) {
   final c = AppColors.dark;
   return [
