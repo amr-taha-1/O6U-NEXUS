@@ -5,6 +5,20 @@ All notable changes to O6U Nexus are recorded here. Format loosely follows
 
 ## [Unreleased]
 
+### Added — GPA Calculator service
+- `assets/data/grade_scale.json` — the official O6U grading scale (marks-percent bands → letter →
+  4.0-scale points), read through a new `GradeBand` model and `GradeScaleRepository`
+  (`gradeScaleProvider`). Every GPA calculation in the app must go through this now, never a
+  hardcoded letter→points map — see docs/Architecture.md "Real data".
+- Removed `Course.gradeScale`/`gradePoints` (a hardcoded, incomplete, and in one case *wrong* map —
+  `C+` was 2.5, the official scale is 2.3). The GPA Simulator now gates on `gradeScaleProvider`
+  alongside `currentStudentProvider` and computes projected GPA from the real scale.
+- The GPA Simulator's grade picker now offers the real scale's full 11 bands (was 6, hardcoded) —
+  switched from a single `Row` of `Expanded` buttons to a `Wrap`, since 11 no longer fit one row.
+- Removed the fictional "3-hour gap after CS402 / book the room" Nexus thread banner from Home —
+  no real-data equivalent, and it was the last leftover fictional insight on a dashboard that's now
+  otherwise real.
+
 ### Added — Foundation
 - Project scaffold: Flutter app `o6u_nexus`, iOS/Android/Web targets.
 - Dependencies: `flutter_riverpod`, `go_router`, `freezed`, `google_fonts`,

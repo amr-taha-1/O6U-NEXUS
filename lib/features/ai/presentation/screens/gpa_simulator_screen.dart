@@ -4,8 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/widgets.dart';
 import '../../../../shared/data/course_repository.dart';
+import '../../../../shared/data/grade_scale_repository.dart';
 import '../../../../shared/data/student_repository.dart';
 import '../../../../shared/domain/course.dart';
+import '../../../../shared/domain/grade_band.dart';
 import '../../application/gpa_simulator_controller.dart';
 
 /// Lets a student feel the consequence of a grade before the exam. Ports the
@@ -20,44 +22,53 @@ class GpaSimulatorScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final courses = ref.watch(coursesProvider);
     final studentAsync = ref.watch(currentStudentProvider);
+    final gradeScaleAsync = ref.watch(gradeScaleProvider);
     final picks = ref.watch(gpaSimulatorControllerProvider);
 
     return AppPushScaffold(
       title: 'GPA Simulator',
       body: studentAsync.when(
-        data: (student) {
-          final sim = ref.watch(gpaSimulationProvider);
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
-                child: _ProjectedHero(projected: sim.projected, delta: sim.delta, current: student.cumulativeGpa),
-              ),
-              const SectionHeader('Move a grade, watch it move'),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
-                child: Column(
-                  children: [
-                    for (final course in courses)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: _CourseGradeCard(
-                          course: course,
-                          picked: picks[course.code] ?? course.grade,
-                          onPick: (grade) => ref.read(gpaSimulatorControllerProvider.notifier).pick(course.code, grade),
-                        ),
-                      ),
-                  ],
+        data: (student) => gradeScaleAsync.when(
+          data: (gradeScale) {
+            final sim = ref.watch(gpaSimulationProvider);
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+                  child: _ProjectedHero(projected: sim.projected, delta: sim.delta, current: student.cumulativeGpa),
                 ),
-              ),
-              const Padding(
-                padding: EdgeInsets.fromLTRB(AppSpacing.screenMargin, 4, AppSpacing.screenMargin, 0),
-                child: _InsightCard(),
-              ),
-            ],
-          );
-        },
+                const SectionHeader('Move a grade, watch it move'),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+                  child: Column(
+                    children: [
+                      for (final course in courses)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: _CourseGradeCard(
+                            course: course,
+                            gradeScale: gradeScale,
+                            picked: picks[course.code] ?? course.grade,
+                            onPick: (grade) => ref.read(gpaSimulatorControllerProvider.notifier).pick(course.code, grade),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(AppSpacing.screenMargin, 4, AppSpacing.screenMargin, 0),
+                  child: _InsightCard(),
+                ),
+              ],
+            );
+          },
+          loading: () => const Padding(
+            padding: EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+            child: SkeletonListTile(isFirst: true),
+          ),
+          error: (error, stackTrace) => StatusPlaceholder.error(message: 'Couldn\'t load the grading scale: $error'),
+        ),
         loading: () => const Padding(
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
           child: SkeletonListTile(isFirst: true),
@@ -108,15 +119,16 @@ class _ProjectedHero extends StatelessWidget {
 }
 
 class _CourseGradeCard extends StatelessWidget {
-  const _CourseGradeCard({required this.course, required this.picked, required this.onPick});
+  const _CourseGradeCard({required this.course, required this.gradeScale, required this.picked, required this.onPick});
   final Course course;
+  final List<GradeBand> gradeScale;
   final String picked;
   final ValueChanged<String> onPick;
 
   @override
   Widget build(BuildContext context) {
     final text = context.textStyles;
-    final grades = Course.gradeScale.keys.toList();
+    final grades = [for (final band in gradeScale) band.letter];
 
     return AppCard(
       padding: const EdgeInsets.all(13),
@@ -131,14 +143,16 @@ class _CourseGradeCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 9),
-          Row(
+          // A `Wrap`, not a `Row` of `Expanded`s: the real grading scale has
+          // 11 bands (A through F), too many to fit one row legibly.
+          Wrap(
+            spacing: 6,
+            runSpacing: 6,
             children: [
               for (final grade in grades)
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: grade == grades.last ? 0 : 5),
-                    child: _GradeButton(label: grade, selected: grade == picked, onTap: () => onPick(grade)),
-                  ),
+                SizedBox(
+                  width: 50,
+                  child: _GradeButton(label: grade, selected: grade == picked, onTap: () => onPick(grade)),
                 ),
             ],
           ),

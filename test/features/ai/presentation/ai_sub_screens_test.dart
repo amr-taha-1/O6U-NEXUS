@@ -8,6 +8,7 @@ import 'package:o6u_nexus/features/ai/presentation/screens/graduation_planner_sc
 import 'package:o6u_nexus/features/ai/presentation/screens/lecture_summary_screen.dart';
 import 'package:o6u_nexus/features/ai/presentation/screens/resume_builder_screen.dart';
 import 'package:o6u_nexus/features/ai/presentation/screens/study_planner_screen.dart';
+import 'package:o6u_nexus/shared/data/grade_scale_repository.dart';
 import 'package:o6u_nexus/shared/data/student_repository.dart';
 
 /// One smoke test per AI pushed sub-screen: pumps the widget inside a
@@ -55,6 +56,7 @@ void main() {
   setUpAll(() async {
     _container = ProviderContainer();
     await _container.read(currentStudentProvider.future);
+    await _container.read(gradeScaleProvider.future);
   });
 
   tearDownAll(() {

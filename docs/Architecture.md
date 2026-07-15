@@ -91,6 +91,11 @@ Missing per-course hours/points (only Fall 2023/2024 has that granularity in the
 render as `—` rather than being guessed. `Student.expectedGraduation` is nullable for the same
 reason — no graduation date was given, so none is fabricated.
 
+The official grading scale (`assets/data/grade_scale.json`, read via `GradeScaleRepository` /
+`gradeScaleProvider`) is the single source of truth for every letter-grade ↔ points ↔ marks-percent
+conversion in the app — nothing hardcodes a grade→points map. The GPA Simulator gates on it the
+same way it gates on `currentStudentProvider`.
+
 Everything else (current-semester Schedule, Attendance, Assignments, Exam Schedule, the GPA
 Simulator's course picker, Campus marketplace/social features) is still fictional dummy data — see
 "Overview" above. `features/academics/.../transcript_course.dart` is deliberately named

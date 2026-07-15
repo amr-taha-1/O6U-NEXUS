@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../shared/data/course_repository.dart';
+import '../../../shared/data/grade_scale_repository.dart';
 import '../../../shared/data/student_repository.dart';
-import '../../../shared/domain/course.dart';
 
 /// The GPA Simulator's hypothetical grade picks, keyed by course code —
 /// defaults to each course's actual current grade. Ports the reference's
@@ -33,19 +33,21 @@ class GpaSimulation {
   final double delta;
 }
 
-/// Reads [currentStudentProvider]'s already-resolved value: only ever
-/// watched from within `GpaSimulatorScreen`, which gates its build on the
-/// student data being ready first (see the screen's `AsyncValue.when`), so
-/// `.requireValue` is safe here.
+/// Reads [currentStudentProvider]'s and [gradeScaleProvider]'s
+/// already-resolved values: only ever watched from within
+/// `GpaSimulatorScreen`, which gates its build on both being ready first
+/// (see the screen's nested `AsyncValue.when`), so `.requireValue` is safe
+/// here.
 final gpaSimulationProvider = Provider<GpaSimulation>((ref) {
   final courses = ref.watch(coursesProvider);
   final student = ref.watch(currentStudentProvider).requireValue;
+  final gradeScale = ref.watch(gradeScaleProvider).requireValue;
   final picks = ref.watch(gpaSimulatorControllerProvider);
 
   final creditHours = courses.fold<int>(0, (sum, c) => sum + c.creditHours);
   final points = courses.fold<double>(0, (sum, c) {
     final grade = picks[c.code] ?? c.grade;
-    return sum + (Course.gradeScale[grade] ?? c.gradePoints) * c.creditHours;
+    return sum + gradeScale.pointsForLetter(grade) * c.creditHours;
   });
   final projected =
       (student.cumulativeGpa * student.creditHoursCompleted + points) / (student.creditHoursCompleted + creditHours);

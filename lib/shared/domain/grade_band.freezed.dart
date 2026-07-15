@@ -1,0 +1,222 @@
+// coverage:ignore-file
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
+
+part of 'grade_band.dart';
+
+// **************************************************************************
+// FreezedGenerator
+// **************************************************************************
+
+T _$identity<T>(T value) => value;
+
+final _privateConstructorUsedError = UnsupportedError(
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
+
+/// @nodoc
+mixin _$GradeBand {
+  String get letter => throw _privateConstructorUsedError;
+  double get minPercent => throw _privateConstructorUsedError;
+  double? get maxPercent => throw _privateConstructorUsedError;
+  double get points => throw _privateConstructorUsedError;
+
+  /// Create a copy of GradeBand
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $GradeBandCopyWith<GradeBand> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $GradeBandCopyWith<$Res> {
+  factory $GradeBandCopyWith(GradeBand value, $Res Function(GradeBand) then) =
+      _$GradeBandCopyWithImpl<$Res, GradeBand>;
+  @useResult
+  $Res call({
+    String letter,
+    double minPercent,
+    double? maxPercent,
+    double points,
+  });
+}
+
+/// @nodoc
+class _$GradeBandCopyWithImpl<$Res, $Val extends GradeBand>
+    implements $GradeBandCopyWith<$Res> {
+  _$GradeBandCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of GradeBand
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? letter = null,
+    Object? minPercent = null,
+    Object? maxPercent = freezed,
+    Object? points = null,
+  }) {
+    return _then(
+      _value.copyWith(
+            letter: null == letter
+                ? _value.letter
+                : letter // ignore: cast_nullable_to_non_nullable
+                      as String,
+            minPercent: null == minPercent
+                ? _value.minPercent
+                : minPercent // ignore: cast_nullable_to_non_nullable
+                      as double,
+            maxPercent: freezed == maxPercent
+                ? _value.maxPercent
+                : maxPercent // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            points: null == points
+                ? _value.points
+                : points // ignore: cast_nullable_to_non_nullable
+                      as double,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$GradeBandImplCopyWith<$Res>
+    implements $GradeBandCopyWith<$Res> {
+  factory _$$GradeBandImplCopyWith(
+    _$GradeBandImpl value,
+    $Res Function(_$GradeBandImpl) then,
+  ) = __$$GradeBandImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({
+    String letter,
+    double minPercent,
+    double? maxPercent,
+    double points,
+  });
+}
+
+/// @nodoc
+class __$$GradeBandImplCopyWithImpl<$Res>
+    extends _$GradeBandCopyWithImpl<$Res, _$GradeBandImpl>
+    implements _$$GradeBandImplCopyWith<$Res> {
+  __$$GradeBandImplCopyWithImpl(
+    _$GradeBandImpl _value,
+    $Res Function(_$GradeBandImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of GradeBand
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? letter = null,
+    Object? minPercent = null,
+    Object? maxPercent = freezed,
+    Object? points = null,
+  }) {
+    return _then(
+      _$GradeBandImpl(
+        letter: null == letter
+            ? _value.letter
+            : letter // ignore: cast_nullable_to_non_nullable
+                  as String,
+        minPercent: null == minPercent
+            ? _value.minPercent
+            : minPercent // ignore: cast_nullable_to_non_nullable
+                  as double,
+        maxPercent: freezed == maxPercent
+            ? _value.maxPercent
+            : maxPercent // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        points: null == points
+            ? _value.points
+            : points // ignore: cast_nullable_to_non_nullable
+                  as double,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$GradeBandImpl extends _GradeBand {
+  const _$GradeBandImpl({
+    required this.letter,
+    required this.minPercent,
+    this.maxPercent,
+    required this.points,
+  }) : super._();
+
+  @override
+  final String letter;
+  @override
+  final double minPercent;
+  @override
+  final double? maxPercent;
+  @override
+  final double points;
+
+  @override
+  String toString() {
+    return 'GradeBand(letter: $letter, minPercent: $minPercent, maxPercent: $maxPercent, points: $points)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$GradeBandImpl &&
+            (identical(other.letter, letter) || other.letter == letter) &&
+            (identical(other.minPercent, minPercent) ||
+                other.minPercent == minPercent) &&
+            (identical(other.maxPercent, maxPercent) ||
+                other.maxPercent == maxPercent) &&
+            (identical(other.points, points) || other.points == points));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, letter, minPercent, maxPercent, points);
+
+  /// Create a copy of GradeBand
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$GradeBandImplCopyWith<_$GradeBandImpl> get copyWith =>
+      __$$GradeBandImplCopyWithImpl<_$GradeBandImpl>(this, _$identity);
+}
+
+abstract class _GradeBand extends GradeBand {
+  const factory _GradeBand({
+    required final String letter,
+    required final double minPercent,
+    final double? maxPercent,
+    required final double points,
+  }) = _$GradeBandImpl;
+  const _GradeBand._() : super._();
+
+  @override
+  String get letter;
+  @override
+  double get minPercent;
+  @override
+  double? get maxPercent;
+  @override
+  double get points;
+
+  /// Create a copy of GradeBand
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$GradeBandImplCopyWith<_$GradeBandImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
