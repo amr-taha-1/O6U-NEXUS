@@ -3,11 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
 import 'core/router/app_router.dart';
+import 'core/services/class_notification_scheduler.dart';
 import 'core/services/theme_mode_controller.dart';
 import 'core/theme/theme.dart';
 import 'core/utils/responsive.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await ClassNotificationScheduler.initialize();
   runApp(const ProviderScope(child: O6uNexusApp()));
 }
 

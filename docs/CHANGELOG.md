@@ -5,6 +5,26 @@ All notable changes to O6U Nexus are recorded here. Format loosely follows
 
 ## [Unreleased]
 
+### Added — Class-reminder notifications
+- `core/services/class_notification_scheduler.dart` (`flutter_local_notifications` + `timezone`):
+  schedules a local notification for every real class session (`features/schedule/`) at each
+  enabled offset (1h/30m/10m before), recurring weekly via `DateTimeComponents.dayOfWeekAndTime` —
+  no per-day manual re-scheduling needed.
+- `features/notifications/application/class_reminder_sync.dart`: watched once from `AppShell`,
+  re-schedules automatically whenever the real timetable or the Settings toggles change.
+- New "Class reminders" section in Settings: a master toggle plus independent 1h/30m/10m-before
+  toggles, matching the existing Quiet Hours toggle's in-memory-only pattern (nothing persists
+  across a cold restart in this sprint — see `profile_preferences.dart`).
+- Android manifest: `POST_NOTIFICATIONS`, `SCHEDULE_EXACT_ALARM`/`USE_EXACT_ALARM`,
+  `RECEIVE_BOOT_COMPLETED` permissions, plus the boot-rearm receiver
+  `flutter_local_notifications` needs to survive a device reboot.
+- Not verified end-to-end on-device this session: this sandbox's Gradle cannot fetch *any* new
+  Maven artifact (a persistent SSL trust-chain failure resolving `dl.google.com`/
+  `repo.maven.apache.org`, unrelated to this change), so the Android build couldn't be run here
+  after adding `flutter_local_notifications`. `flutter analyze` is clean and the full test suite
+  passes; the dependency and scheduling logic should be verified on a normal internet-connected
+  machine before relying on it.
+
 ### Added — Real Schedule
 - `assets/data/schedule.json` — the student's real Summer-term class meetings, filtered from the
   department-wide timetable (`V5-Summer Term ALL Levels- 2025-2026.pdf`) down to their own three

@@ -7,6 +7,7 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/services/theme_mode_controller.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/widgets.dart';
+import '../../../notifications/application/class_reminder_settings.dart';
 import '../../application/profile_preferences.dart';
 
 /// Appearance, notifications, language, and the way in to Privacy/Security —
@@ -20,6 +21,10 @@ class SettingsScreen extends ConsumerWidget {
     final themeMode = ref.watch(themeModeControllerProvider);
     final isDark = themeMode == ThemeMode.dark;
     final quietHours = ref.watch(quietHoursEnabledProvider);
+    final remindersEnabled = ref.watch(classRemindersEnabledProvider);
+    final oneHourBefore = ref.watch(reminderOneHourBeforeProvider);
+    final thirtyMinBefore = ref.watch(reminderThirtyMinBeforeProvider);
+    final tenMinBefore = ref.watch(reminderTenMinBeforeProvider);
 
     return AppPushScaffold(
       title: 'Settings',
@@ -61,6 +66,68 @@ class SettingsScreen extends ConsumerWidget {
                   value: quietHours,
                   onChanged: (on) => ref.read(quietHoursEnabledProvider.notifier).state = on,
                 ),
+              ),
+            ),
+          ),
+          const SectionHeader('Class reminders'),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+            child: AppCard(
+              padding: EdgeInsets.zero,
+              child: Column(
+                children: [
+                  NavRowCard(
+                    isFirst: true,
+                    icon: CupertinoIcons.bell_fill,
+                    iconColor: colors.accent,
+                    title: 'Class reminders',
+                    subtitle: remindersEnabled ? 'On · alerts before lectures and labs' : 'Off',
+                    showChevron: false,
+                    trailing: CupertinoSwitch(
+                      value: remindersEnabled,
+                      onChanged: (on) => ref.read(classRemindersEnabledProvider.notifier).state = on,
+                    ),
+                  ),
+                  NavRowCard(
+                    icon: CupertinoIcons.time,
+                    iconColor: colors.info,
+                    title: '1 hour before',
+                    subtitle: 'Every lecture and lab',
+                    showChevron: false,
+                    trailing: CupertinoSwitch(
+                      value: oneHourBefore,
+                      onChanged: remindersEnabled
+                          ? (on) => ref.read(reminderOneHourBeforeProvider.notifier).state = on
+                          : null,
+                    ),
+                  ),
+                  NavRowCard(
+                    icon: CupertinoIcons.time,
+                    iconColor: colors.info,
+                    title: '30 minutes before',
+                    subtitle: 'Every lecture and lab',
+                    showChevron: false,
+                    trailing: CupertinoSwitch(
+                      value: thirtyMinBefore,
+                      onChanged: remindersEnabled
+                          ? (on) => ref.read(reminderThirtyMinBeforeProvider.notifier).state = on
+                          : null,
+                    ),
+                  ),
+                  NavRowCard(
+                    icon: CupertinoIcons.time,
+                    iconColor: colors.info,
+                    title: '10 minutes before',
+                    subtitle: 'Every lecture and lab',
+                    showChevron: false,
+                    trailing: CupertinoSwitch(
+                      value: tenMinBefore,
+                      onChanged: remindersEnabled
+                          ? (on) => ref.read(reminderTenMinBeforeProvider.notifier).state = on
+                          : null,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

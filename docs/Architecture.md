@@ -96,6 +96,14 @@ The official grading scale (`assets/data/grade_scale.json`, read via `GradeScale
 conversion in the app — nothing hardcodes a grade→points map. The GPA Simulator gates on it the
 same way it gates on `currentStudentProvider`.
 
+The real weekly Summer-term schedule (`assets/data/schedule.json`, filtered from the department-wide
+timetable down to the student's own registered courses and confirmed lecture/lab sections — see
+`features/schedule/`) drives local class-reminder notifications
+(`core/services/class_notification_scheduler.dart`): one scheduled per session per enabled offset
+(1h/30m/10m before, toggled in Settings), recurring weekly, re-scheduled automatically whenever the
+schedule or the toggles change (`features/notifications/application/class_reminder_sync.dart`,
+watched from `AppShell`).
+
 The Information Systems curriculum (`assets/data/bylaw_information_systems.json`, transcribed from
 the department's official Bylaw-2 prerequisites document) drives the Course Catalog / eligibility
 engine (`features/curriculum/`): `completedCourseCodesProvider` derives "has this course been

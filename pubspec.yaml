@@ -62,6 +62,8 @@ dependencies:
 
   # Lightweight local persistence (e.g. "seen onboarding", theme choice)
   shared_preferences: ^2.3.3
+  flutter_local_notifications: ^22.0.1
+  timezone: ^0.11.1
 
 dev_dependencies:
   flutter_test:
