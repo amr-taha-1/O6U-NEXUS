@@ -96,6 +96,16 @@ The official grading scale (`assets/data/grade_scale.json`, read via `GradeScale
 conversion in the app — nothing hardcodes a grade→points map. The GPA Simulator gates on it the
 same way it gates on `currentStudentProvider`.
 
+The Information Systems curriculum (`assets/data/bylaw_information_systems.json`, transcribed from
+the department's official Bylaw-2 prerequisites document) drives the Course Catalog / eligibility
+engine (`features/curriculum/`): `completedCourseCodesProvider` derives "has this course been
+passed" live from the real transcript (any grade except F/WF/W), and `courseEligibilityProvider`
+cross-references that against each course's real prerequisite chain to compute completed / eligible
+/ locked — no hardcoded eligibility rules. `FRM416` (Graduation Project 1) is a special case: its
+prerequisite is Article 40 of the bylaw (a 103-completed-credit-hour threshold), not another course.
+`estimatedRemainingSemestersProvider` is explicitly labelled an estimate (remaining hours ÷ the
+student's own historical average hours/semester) — never presented as a promise.
+
 Everything else (current-semester Schedule, Attendance, Assignments, Exam Schedule, the GPA
 Simulator's course picker, Campus marketplace/social features) is still fictional dummy data — see
 "Overview" above. `features/academics/.../transcript_course.dart` is deliberately named

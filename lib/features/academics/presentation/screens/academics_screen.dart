@@ -199,6 +199,13 @@ class _AcademicsBody extends StatelessWidget {
                   subtitle: '${student.creditHoursRemaining} hours remaining',
                   onTap: () => context.push(AppRoutes.academicsGraduation),
                 ),
+                NavRowCard(
+                  icon: CupertinoIcons.square_stack_3d_up,
+                  iconColor: colors.info,
+                  title: 'Course Catalog',
+                  subtitle: 'What can I register next?',
+                  onTap: () => context.push(AppRoutes.academicsCatalog),
+                ),
               ],
             ),
           ),

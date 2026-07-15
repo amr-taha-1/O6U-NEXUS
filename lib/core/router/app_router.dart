@@ -25,6 +25,7 @@ import '../../features/campus/presentation/screens/book_exchange_screen.dart';
 import '../../features/campus/presentation/screens/campus_screen.dart';
 import '../../features/campus/presentation/screens/freelance_screen.dart';
 import '../../features/campus/presentation/screens/internships_screen.dart';
+import '../../features/curriculum/presentation/screens/course_catalog_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/profile/presentation/screens/about_screen.dart';
 import '../../features/profile/presentation/screens/achievements_screen.dart';
@@ -77,6 +78,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   GoRoute(path: 'assignments', builder: (context, state) => const AssignmentsScreen()),
                   GoRoute(path: 'graduation', builder: (context, state) => const GraduationScreen()),
                   GoRoute(path: 'analytics', builder: (context, state) => const AcademicAnalyticsScreen()),
+                  GoRoute(path: 'catalog', builder: (context, state) => const CourseCatalogScreen()),
                 ],
               ),
             ],

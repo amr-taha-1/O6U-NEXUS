@@ -5,6 +5,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:o6u_nexus/core/theme/theme.dart';
 import 'package:o6u_nexus/features/academics/presentation/screens/graduation_screen.dart';
 import 'package:o6u_nexus/features/academics/presentation/screens/transcript_screen.dart';
+import 'package:o6u_nexus/features/curriculum/application/curriculum_engine.dart';
+import 'package:o6u_nexus/features/curriculum/data/curriculum_repository.dart';
+import 'package:o6u_nexus/features/curriculum/presentation/screens/course_catalog_screen.dart';
 import 'package:o6u_nexus/features/degree_progress/data/degree_progress_repository.dart';
 import 'package:o6u_nexus/features/transcript/data/transcript_repository.dart';
 import 'package:o6u_nexus/shared/data/student_repository.dart';
@@ -27,6 +30,10 @@ void main() {
     await _container.read(currentStudentProvider.future);
     await _container.read(transcriptProvider.future);
     await _container.read(degreeProgressProvider.future);
+    await _container.read(curriculumProvider.future);
+    await _container.read(minCreditHoursForGraduationProjectProvider.future);
+    await _container.read(courseEligibilityProvider.future);
+    await _container.read(estimatedRemainingSemestersProvider.future);
   });
 
   tearDownAll(() {
@@ -56,5 +63,18 @@ void main() {
     expect(find.text('Degree Progress'), findsWidgets);
     expect(find.textContaining('Department Mandatory'), findsOneWidget);
     expect(find.textContaining('91 of 144 hours'), findsOneWidget);
+  });
+
+  testWidgets('CourseCatalogScreen computes real eligibility from the transcript and bylaw', (tester) async {
+    await pumpReady(tester, const CourseCatalogScreen());
+    expect(find.text('Course Catalog'), findsWidgets);
+    // Independently derived from the real transcript + bylaw prerequisites —
+    // matches the student's actual registered summer courses.
+    expect(find.text('Knowledge Management'), findsOneWidget);
+    expect(find.text('Database Management Systems 2'), findsOneWidget);
+    // Locked: Computer Networks (NTM313) hasn't been passed yet, so it gates
+    // several later courses — appears as a missing-prerequisite chip more
+    // than once.
+    expect(find.text('Computer Networks'), findsWidgets);
   });
 }

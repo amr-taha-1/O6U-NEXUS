@@ -5,6 +5,29 @@ All notable changes to O6U Nexus are recorded here. Format loosely follows
 
 ## [Unreleased]
 
+### Added — Curriculum engine (Course Catalog)
+- `assets/data/bylaw_information_systems.json` — the Information Systems track's full 50-course
+  curriculum (code, name, credit hours, year level, category, prerequisites), transcribed from the
+  department's official Bylaw-2 prerequisites document.
+- New `features/curriculum/`: `CurriculumRepository`/`curriculumProvider` reads the bylaw;
+  `completedCourseCodesProvider` derives "has this course been passed" live from the real
+  transcript (any grade except F/WF/W — a retake counts once passed on any attempt);
+  `courseEligibilityProvider` cross-references the two to compute, per course, completed /
+  eligible-to-register-next / locked (with exactly which prerequisites are still missing) — no
+  hardcoded eligibility rules. `FRM416` (Graduation Project 1) is a special case: its prerequisite
+  is Article 40 of the bylaw (103 completed credit hours), not another course.
+  `estimatedRemainingSemestersProvider` gives a clearly-labelled estimate (remaining hours ÷ the
+  student's own historical average hours/semester).
+- New `CourseCatalogScreen` (`/academics/catalog`, "Course Catalog" row in the Academics hub):
+  completed/eligible/locked counts, an estimated-graduation note, the eligible-now list, and locked
+  courses with their missing prerequisites as chips. Independently cross-validated against the
+  student's actual registered summer courses — Knowledge Management (`ISM424`) and Database
+  Management Systems 2 (`ISM413`) both compute as eligible from the transcript alone, matching
+  reality.
+- Only the Information Systems track (the signed-in student's major) was transcribed; the bylaw
+  document also covers Computer Science, Network Technologies, and Artificial Intelligence, not yet
+  built.
+
 ### Added — GPA Calculator service
 - `assets/data/grade_scale.json` — the official O6U grading scale (marks-percent bands → letter →
   4.0-scale points), read through a new `GradeBand` model and `GradeScaleRepository`

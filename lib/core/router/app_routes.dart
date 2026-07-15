@@ -26,6 +26,7 @@ abstract final class AppRoutes {
   static const academicsAssignments = '/academics/assignments';
   static const academicsGraduation = '/academics/graduation';
   static const academicsAnalytics = '/academics/analytics';
+  static const academicsCatalog = '/academics/catalog';
 
   // AI sub-screens
   static const aiStudyPlanner = '/ai/study-planner';
