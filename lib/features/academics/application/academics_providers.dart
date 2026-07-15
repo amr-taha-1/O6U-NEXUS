@@ -8,7 +8,7 @@ import '../domain/exam.dart';
 
 /// Screen-local dummy fixtures for Academics' pushed sub-screens. These are
 /// small enough, and specific enough to a single screen, that a repository
-/// indirection would add no value � same call as
+/// indirection would add no value — same call as
 /// `features/home/application/home_providers.dart`'s `todayScheduleProvider`.
 
 /// One tile in the Schedule screen's week strip.
@@ -65,7 +65,7 @@ final weekScheduleProvider = Provider<List<ScheduleItem>>((ref) {
   ];
 });
 
-/// This semester's GPA � distinct from the student's cumulative GPA.
+/// This semester's GPA — distinct from the student's cumulative GPA.
 final semesterGpaProvider = Provider<double>((ref) => 3.24);
 
 /// Overall attendance across all courses (the same 92% cited on Home's
@@ -160,19 +160,5 @@ final assignmentsProvider = Provider<List<Assignment>>((ref) {
       dueLabel: 'Graded · A-',
       status: AssignmentStatus.graded,
     ),
-  ];
-});
-
-/// Level 1-3 done, Level 4 now, Summer advised, Graduation forecast � ports
-/// the reference's `GradPlanner` `steps` array.
-final graduationStepsProvider = Provider<List<GraduationStep>>((ref) {
-  final c = AppColors.dark;
-  return [
-    GraduationStep(title: 'Level 1', subtitle: '30 hrs', statusLabel: 'Done', status: GraduationStepStatus.done, accent: c.success),
-    GraduationStep(title: 'Level 2', subtitle: '32 hrs', statusLabel: 'Done', status: GraduationStepStatus.done, accent: c.success),
-    GraduationStep(title: 'Level 3', subtitle: '30 hrs', statusLabel: 'Done', status: GraduationStepStatus.done, accent: c.success),
-    GraduationStep(title: 'Level 4', subtitle: '18 hrs', statusLabel: 'Now', status: GraduationStepStatus.now, accent: c.accent),
-    GraduationStep(title: 'Summer', subtitle: '6 hrs', statusLabel: 'Advised', status: GraduationStepStatus.advised, accent: c.warning),
-    GraduationStep(title: 'Graduation', subtitle: 'Aug 2027', statusLabel: '96%', status: GraduationStepStatus.forecast, accent: c.info),
   ];
 });

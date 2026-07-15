@@ -5,6 +5,7 @@ import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/widgets.dart';
 import '../../../../shared/data/course_repository.dart';
 import '../../../../shared/data/student_repository.dart';
+import '../../../../shared/domain/ai_message.dart';
 import '../../../../shared/domain/course.dart';
 import '../../../../shared/domain/student.dart';
 import '../../application/resume_builder_providers.dart';
@@ -19,53 +20,72 @@ class ResumeBuilderScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final student = ref.watch(currentStudentProvider);
+    final studentAsync = ref.watch(currentStudentProvider);
     final courses = ref.watch(coursesProvider);
     final verdict = ref.watch(resumeVerdictProvider);
 
     return AppPushScaffold(
       title: 'Resume Builder',
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
-            child: AiMessageBubble(message: verdict),
-          ),
-          const SectionHeader('Education'),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
-            child: _EducationCard(student: student),
-          ),
-          const SectionHeader('Skills'),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
-            child: _SkillsCard(courses: courses),
-          ),
-          const SectionHeader('Projects'),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
-            child: AppCard(
-              padding: EdgeInsets.zero,
-              child: const StatusPlaceholder.empty(
-                icon: CupertinoIcons.folder,
-                title: 'No projects added yet',
-                message: "Nexus will suggest ones from your coursework once you link a GitHub repo.",
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(AppSpacing.screenMargin, 18, AppSpacing.screenMargin, 0),
-            child: AppButton(
-              label: 'Export as PDF',
-              icon: CupertinoIcons.arrow_down_doc,
-              expand: true,
-              onPressed: () =>
-                  AppSnackbar.show(context, message: 'Resume exported to Downloads.', kind: AppSnackbarKind.success),
-            ),
-          ),
-        ],
+      body: studentAsync.when(
+        data: (student) => _ResumeBody(student: student, courses: courses, verdict: verdict),
+        loading: () => const Padding(
+          padding: EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+          child: SkeletonListTile(isFirst: true),
+        ),
+        error: (error, stackTrace) => StatusPlaceholder.error(message: 'Couldn\'t load your record: $error'),
       ),
+    );
+  }
+}
+
+class _ResumeBody extends StatelessWidget {
+  const _ResumeBody({required this.student, required this.courses, required this.verdict});
+  final Student student;
+  final List<Course> courses;
+  final AiAssistantMessage verdict;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+          child: AiMessageBubble(message: verdict),
+        ),
+        const SectionHeader('Education'),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+          child: _EducationCard(student: student),
+        ),
+        const SectionHeader('Skills'),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+          child: _SkillsCard(courses: courses),
+        ),
+        const SectionHeader('Projects'),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+          child: AppCard(
+            padding: EdgeInsets.zero,
+            child: const StatusPlaceholder.empty(
+              icon: CupertinoIcons.folder,
+              title: 'No projects added yet',
+              message: "Nexus will suggest ones from your coursework once you link a GitHub repo.",
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(AppSpacing.screenMargin, 18, AppSpacing.screenMargin, 0),
+          child: AppButton(
+            label: 'Export as PDF',
+            icon: CupertinoIcons.arrow_down_doc,
+            expand: true,
+            onPressed: () =>
+                AppSnackbar.show(context, message: 'Resume exported to Downloads.', kind: AppSnackbarKind.success),
+          ),
+        ),
+      ],
     );
   }
 }

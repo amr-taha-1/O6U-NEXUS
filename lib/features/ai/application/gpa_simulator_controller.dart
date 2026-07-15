@@ -33,9 +33,13 @@ class GpaSimulation {
   final double delta;
 }
 
+/// Reads [currentStudentProvider]'s already-resolved value: only ever
+/// watched from within `GpaSimulatorScreen`, which gates its build on the
+/// student data being ready first (see the screen's `AsyncValue.when`), so
+/// `.requireValue` is safe here.
 final gpaSimulationProvider = Provider<GpaSimulation>((ref) {
   final courses = ref.watch(coursesProvider);
-  final student = ref.watch(currentStudentProvider);
+  final student = ref.watch(currentStudentProvider).requireValue;
   final picks = ref.watch(gpaSimulatorControllerProvider);
 
   final creditHours = courses.fold<int>(0, (sum, c) => sum + c.creditHours);

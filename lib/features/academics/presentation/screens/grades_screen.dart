@@ -8,7 +8,7 @@ import '../../../../shared/data/student_repository.dart';
 import '../../../../shared/domain/course.dart';
 import '../../application/academics_providers.dart';
 
-/// Semester and cumulative GPA, side by side � nothing else. Ports the
+/// Semester and cumulative GPA, side by side — nothing else. Ports the
 /// reference's `Grades` component (SPECS.grades). Also where a student
 /// checks their GPA in general; there's no separate GPA screen.
 class GradesScreen extends ConsumerWidget {
@@ -19,8 +19,9 @@ class GradesScreen extends ConsumerWidget {
     final colors = context.colors;
     final text = context.textStyles;
     final courses = ref.watch(coursesProvider);
-    final student = ref.watch(currentStudentProvider);
+    final studentAsync = ref.watch(currentStudentProvider);
     final semesterGpa = ref.watch(semesterGpaProvider);
+    final cumulativeGpaLabel = studentAsync.valueOrNull?.cumulativeGpa.toStringAsFixed(2) ?? '—';
 
     return AppPushScaffold(
       title: 'Grades',
@@ -48,7 +49,7 @@ class GradesScreen extends ConsumerWidget {
                     children: [
                       Text('Cumulative', style: text.subhead),
                       Text(
-                        student.cumulativeGpa.toStringAsFixed(2),
+                        cumulativeGpaLabel,
                         style: text.title2.copyWith(color: colors.accent, fontSize: 22),
                       ),
                     ],

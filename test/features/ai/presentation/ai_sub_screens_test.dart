@@ -8,6 +8,7 @@ import 'package:o6u_nexus/features/ai/presentation/screens/graduation_planner_sc
 import 'package:o6u_nexus/features/ai/presentation/screens/lecture_summary_screen.dart';
 import 'package:o6u_nexus/features/ai/presentation/screens/resume_builder_screen.dart';
 import 'package:o6u_nexus/features/ai/presentation/screens/study_planner_screen.dart';
+import 'package:o6u_nexus/shared/data/student_repository.dart';
 
 /// One smoke test per AI pushed sub-screen: pumps the widget inside a
 /// [ProviderScope] + [MaterialApp], asserts key content renders, no
@@ -30,9 +31,38 @@ Future<void> _settleAnimatedTimers(WidgetTester tester) async {
   await tester.pump(const Duration(milliseconds: 50));
 }
 
+/// GpaSimulatorScreen, GraduationPlannerScreen, and ResumeBuilderScreen all
+/// read real data via [currentStudentProvider]. They share ONE
+/// [ProviderContainer], resolved once in [setUpAll]: `flutter_test`'s
+/// asset-bundle platform channel only tolerates a single real disk-backed
+/// asset load per isolate — a *second* independent `rootBundle.loadString`
+/// call in the same test file hangs forever, regardless of which screen
+/// triggers it. Reusing one already-resolved container sidesteps that
+/// entirely — see academics_real_data_screens_test.dart's note.
+late ProviderContainer _container;
+
+Future<void> _pumpReady(WidgetTester tester, Widget screen) async {
+  await tester.pumpWidget(
+    UncontrolledProviderScope(
+      container: _container,
+      child: MaterialApp(theme: AppTheme.dark(), home: screen),
+    ),
+  );
+  await tester.pump();
+}
+
 void main() {
+  setUpAll(() async {
+    _container = ProviderContainer();
+    await _container.read(currentStudentProvider.future);
+  });
+
+  tearDownAll(() {
+    _container.dispose();
+  });
+
   testWidgets('GpaSimulatorScreen renders the projected GPA hero and grade pickers', (tester) async {
-    await _pump(tester, const GpaSimulatorScreen());
+    await _pumpReady(tester, const GpaSimulatorScreen());
     expect(find.text('GPA Simulator'), findsWidgets);
     expect(find.text('PROJECTED CUMULATIVE'), findsOneWidget);
     expect(find.text('CS402'), findsOneWidget);
@@ -47,13 +77,13 @@ void main() {
   });
 
   testWidgets('GraduationPlannerScreen renders the timeline and bottleneck warning', (tester) async {
-    await _pump(tester, const GraduationPlannerScreen());
+    await _pumpReady(tester, const GraduationPlannerScreen());
     expect(find.text('Graduation Planner'), findsWidgets);
     expect(find.textContaining('CS412'), findsOneWidget);
   });
 
   testWidgets('ResumeBuilderScreen renders the Nexus verdict card and skills', (tester) async {
-    await _pump(tester, const ResumeBuilderScreen());
+    await _pumpReady(tester, const ResumeBuilderScreen());
     expect(find.text('Resume Builder'), findsWidgets);
     expect(find.text('Your resume draft is ready.'), findsOneWidget);
     expect(find.text('Export as PDF'), findsOneWidget);

@@ -8,7 +8,7 @@ import '../../../../shared/domain/course.dart';
 import '../../application/academics_providers.dart';
 
 /// Shows the 75% line, and how far a student is from it. Ports the
-/// reference's `Attendance` component (SPECS.attendance) � the ring is the
+/// reference's `Attendance` component (SPECS.attendance) — the ring is the
 /// summary, the bars are the truth, and both share one colour rule.
 class AttendanceScreen extends ConsumerWidget {
   const AttendanceScreen({super.key});

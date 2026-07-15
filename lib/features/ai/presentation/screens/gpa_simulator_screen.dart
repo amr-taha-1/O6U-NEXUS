@@ -19,41 +19,50 @@ class GpaSimulatorScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final courses = ref.watch(coursesProvider);
-    final student = ref.watch(currentStudentProvider);
+    final studentAsync = ref.watch(currentStudentProvider);
     final picks = ref.watch(gpaSimulatorControllerProvider);
-    final sim = ref.watch(gpaSimulationProvider);
 
     return AppPushScaffold(
       title: 'GPA Simulator',
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
-            child: _ProjectedHero(projected: sim.projected, delta: sim.delta, current: student.cumulativeGpa),
-          ),
-          const SectionHeader('Move a grade, watch it move'),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
-            child: Column(
-              children: [
-                for (final course in courses)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: _CourseGradeCard(
-                      course: course,
-                      picked: picks[course.code] ?? course.grade,
-                      onPick: (grade) => ref.read(gpaSimulatorControllerProvider.notifier).pick(course.code, grade),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          const Padding(
-            padding: EdgeInsets.fromLTRB(AppSpacing.screenMargin, 4, AppSpacing.screenMargin, 0),
-            child: _InsightCard(),
-          ),
-        ],
+      body: studentAsync.when(
+        data: (student) {
+          final sim = ref.watch(gpaSimulationProvider);
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+                child: _ProjectedHero(projected: sim.projected, delta: sim.delta, current: student.cumulativeGpa),
+              ),
+              const SectionHeader('Move a grade, watch it move'),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+                child: Column(
+                  children: [
+                    for (final course in courses)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: _CourseGradeCard(
+                          course: course,
+                          picked: picks[course.code] ?? course.grade,
+                          onPick: (grade) => ref.read(gpaSimulatorControllerProvider.notifier).pick(course.code, grade),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.fromLTRB(AppSpacing.screenMargin, 4, AppSpacing.screenMargin, 0),
+                child: _InsightCard(),
+              ),
+            ],
+          );
+        },
+        loading: () => const Padding(
+          padding: EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+          child: SkeletonListTile(isFirst: true),
+        ),
+        error: (error, stackTrace) => StatusPlaceholder.error(message: 'Couldn\'t load your record: $error'),
       ),
     );
   }

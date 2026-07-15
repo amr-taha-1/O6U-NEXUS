@@ -6,7 +6,7 @@ import '../../../../core/widgets/widgets.dart';
 import '../../application/academics_providers.dart';
 import '../../domain/exam.dart';
 
-/// Not in the design reference � designed to match the Records list on
+/// Not in the design reference — designed to match the Records list on
 /// Academics and the "Next exam · 3 days" stat already shown on Home.
 class ExamScheduleScreen extends ConsumerWidget {
   const ExamScheduleScreen({super.key});

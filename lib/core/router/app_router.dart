@@ -10,6 +10,7 @@ import '../../features/academics/presentation/screens/graduation_screen.dart';
 import '../../features/academics/presentation/screens/schedule_screen.dart';
 import '../../features/academics/presentation/screens/transcript_screen.dart';
 import '../../features/ai/presentation/screens/ai_screen.dart';
+import '../../features/analytics/presentation/screens/academic_analytics_screen.dart';
 import '../../features/ai/presentation/screens/gpa_simulator_screen.dart';
 import '../../features/ai/presentation/screens/graduation_planner_screen.dart';
 import '../../features/ai/presentation/screens/lecture_summary_screen.dart';
@@ -75,6 +76,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   GoRoute(path: 'transcript', builder: (context, state) => const TranscriptScreen()),
                   GoRoute(path: 'assignments', builder: (context, state) => const AssignmentsScreen()),
                   GoRoute(path: 'graduation', builder: (context, state) => const GraduationScreen()),
+                  GoRoute(path: 'analytics', builder: (context, state) => const AcademicAnalyticsScreen()),
                 ],
               ),
             ],

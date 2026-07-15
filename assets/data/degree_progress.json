@@ -1,0 +1,11 @@
+{
+  "categories": [
+    { "name": "University Requirements", "required": 15, "completed": 15 },
+    { "name": "College Requirements", "required": 31, "completed": 31 },
+    { "name": "Department Mandatory", "required": 86, "completed": 45 },
+    { "name": "Department Electives", "required": 12, "completed": 0 }
+  ],
+  "graduationHoursRequired": 144,
+  "graduationHoursCompleted": 91,
+  "cgpa": 2.67
+}

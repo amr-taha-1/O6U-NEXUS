@@ -20,6 +20,8 @@ mixin _$Semester {
   String get label => throw _privateConstructorUsedError;
   double get gpa => throw _privateConstructorUsedError;
   int get creditHours => throw _privateConstructorUsedError;
+  double get points => throw _privateConstructorUsedError;
+  List<TranscriptCourse> get courses => throw _privateConstructorUsedError;
 
   /// Create a copy of Semester
   /// with the given fields replaced by the non-null parameter values.
@@ -33,7 +35,13 @@ abstract class $SemesterCopyWith<$Res> {
   factory $SemesterCopyWith(Semester value, $Res Function(Semester) then) =
       _$SemesterCopyWithImpl<$Res, Semester>;
   @useResult
-  $Res call({String label, double gpa, int creditHours});
+  $Res call({
+    String label,
+    double gpa,
+    int creditHours,
+    double points,
+    List<TranscriptCourse> courses,
+  });
 }
 
 /// @nodoc
@@ -54,6 +62,8 @@ class _$SemesterCopyWithImpl<$Res, $Val extends Semester>
     Object? label = null,
     Object? gpa = null,
     Object? creditHours = null,
+    Object? points = null,
+    Object? courses = null,
   }) {
     return _then(
       _value.copyWith(
@@ -69,6 +79,14 @@ class _$SemesterCopyWithImpl<$Res, $Val extends Semester>
                 ? _value.creditHours
                 : creditHours // ignore: cast_nullable_to_non_nullable
                       as int,
+            points: null == points
+                ? _value.points
+                : points // ignore: cast_nullable_to_non_nullable
+                      as double,
+            courses: null == courses
+                ? _value.courses
+                : courses // ignore: cast_nullable_to_non_nullable
+                      as List<TranscriptCourse>,
           )
           as $Val,
     );
@@ -84,7 +102,13 @@ abstract class _$$SemesterImplCopyWith<$Res>
   ) = __$$SemesterImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String label, double gpa, int creditHours});
+  $Res call({
+    String label,
+    double gpa,
+    int creditHours,
+    double points,
+    List<TranscriptCourse> courses,
+  });
 }
 
 /// @nodoc
@@ -104,6 +128,8 @@ class __$$SemesterImplCopyWithImpl<$Res>
     Object? label = null,
     Object? gpa = null,
     Object? creditHours = null,
+    Object? points = null,
+    Object? courses = null,
   }) {
     return _then(
       _$SemesterImpl(
@@ -119,6 +145,14 @@ class __$$SemesterImplCopyWithImpl<$Res>
             ? _value.creditHours
             : creditHours // ignore: cast_nullable_to_non_nullable
                   as int,
+        points: null == points
+            ? _value.points
+            : points // ignore: cast_nullable_to_non_nullable
+                  as double,
+        courses: null == courses
+            ? _value._courses
+            : courses // ignore: cast_nullable_to_non_nullable
+                  as List<TranscriptCourse>,
       ),
     );
   }
@@ -131,7 +165,9 @@ class _$SemesterImpl implements _Semester {
     required this.label,
     required this.gpa,
     required this.creditHours,
-  });
+    required this.points,
+    required final List<TranscriptCourse> courses,
+  }) : _courses = courses;
 
   @override
   final String label;
@@ -139,10 +175,19 @@ class _$SemesterImpl implements _Semester {
   final double gpa;
   @override
   final int creditHours;
+  @override
+  final double points;
+  final List<TranscriptCourse> _courses;
+  @override
+  List<TranscriptCourse> get courses {
+    if (_courses is EqualUnmodifiableListView) return _courses;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_courses);
+  }
 
   @override
   String toString() {
-    return 'Semester(label: $label, gpa: $gpa, creditHours: $creditHours)';
+    return 'Semester(label: $label, gpa: $gpa, creditHours: $creditHours, points: $points, courses: $courses)';
   }
 
   @override
@@ -153,11 +198,20 @@ class _$SemesterImpl implements _Semester {
             (identical(other.label, label) || other.label == label) &&
             (identical(other.gpa, gpa) || other.gpa == gpa) &&
             (identical(other.creditHours, creditHours) ||
-                other.creditHours == creditHours));
+                other.creditHours == creditHours) &&
+            (identical(other.points, points) || other.points == points) &&
+            const DeepCollectionEquality().equals(other._courses, _courses));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, label, gpa, creditHours);
+  int get hashCode => Object.hash(
+    runtimeType,
+    label,
+    gpa,
+    creditHours,
+    points,
+    const DeepCollectionEquality().hash(_courses),
+  );
 
   /// Create a copy of Semester
   /// with the given fields replaced by the non-null parameter values.
@@ -173,6 +227,8 @@ abstract class _Semester implements Semester {
     required final String label,
     required final double gpa,
     required final int creditHours,
+    required final double points,
+    required final List<TranscriptCourse> courses,
   }) = _$SemesterImpl;
 
   @override
@@ -181,6 +237,10 @@ abstract class _Semester implements Semester {
   double get gpa;
   @override
   int get creditHours;
+  @override
+  double get points;
+  @override
+  List<TranscriptCourse> get courses;
 
   /// Create a copy of Semester
   /// with the given fields replaced by the non-null parameter values.

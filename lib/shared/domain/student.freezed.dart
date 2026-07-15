@@ -19,14 +19,21 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$Student {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
+  String get faculty => throw _privateConstructorUsedError;
   String get major => throw _privateConstructorUsedError;
+  String get academicAdvisor => throw _privateConstructorUsedError;
+  String get nationality => throw _privateConstructorUsedError;
   int get level => throw _privateConstructorUsedError;
   String get university => throw _privateConstructorUsedError;
   double get cumulativeGpa => throw _privateConstructorUsedError;
   double get gpaDelta => throw _privateConstructorUsedError;
   int get creditHoursCompleted => throw _privateConstructorUsedError;
   int get creditHoursTotal => throw _privateConstructorUsedError;
-  String get expectedGraduation => throw _privateConstructorUsedError;
+
+  /// Null when not yet known — a real projected graduation date isn't
+  /// something to guess at from a partial transcript. See PROJECT_RULES.md
+  /// §5: no fabricated data.
+  String? get expectedGraduation => throw _privateConstructorUsedError;
   double get walletBalanceEgp => throw _privateConstructorUsedError;
 
   /// Create a copy of Student
@@ -43,14 +50,17 @@ abstract class $StudentCopyWith<$Res> {
   $Res call({
     String id,
     String name,
+    String faculty,
     String major,
+    String academicAdvisor,
+    String nationality,
     int level,
     String university,
     double cumulativeGpa,
     double gpaDelta,
     int creditHoursCompleted,
     int creditHoursTotal,
-    String expectedGraduation,
+    String? expectedGraduation,
     double walletBalanceEgp,
   });
 }
@@ -72,14 +82,17 @@ class _$StudentCopyWithImpl<$Res, $Val extends Student>
   $Res call({
     Object? id = null,
     Object? name = null,
+    Object? faculty = null,
     Object? major = null,
+    Object? academicAdvisor = null,
+    Object? nationality = null,
     Object? level = null,
     Object? university = null,
     Object? cumulativeGpa = null,
     Object? gpaDelta = null,
     Object? creditHoursCompleted = null,
     Object? creditHoursTotal = null,
-    Object? expectedGraduation = null,
+    Object? expectedGraduation = freezed,
     Object? walletBalanceEgp = null,
   }) {
     return _then(
@@ -92,9 +105,21 @@ class _$StudentCopyWithImpl<$Res, $Val extends Student>
                 ? _value.name
                 : name // ignore: cast_nullable_to_non_nullable
                       as String,
+            faculty: null == faculty
+                ? _value.faculty
+                : faculty // ignore: cast_nullable_to_non_nullable
+                      as String,
             major: null == major
                 ? _value.major
                 : major // ignore: cast_nullable_to_non_nullable
+                      as String,
+            academicAdvisor: null == academicAdvisor
+                ? _value.academicAdvisor
+                : academicAdvisor // ignore: cast_nullable_to_non_nullable
+                      as String,
+            nationality: null == nationality
+                ? _value.nationality
+                : nationality // ignore: cast_nullable_to_non_nullable
                       as String,
             level: null == level
                 ? _value.level
@@ -120,10 +145,10 @@ class _$StudentCopyWithImpl<$Res, $Val extends Student>
                 ? _value.creditHoursTotal
                 : creditHoursTotal // ignore: cast_nullable_to_non_nullable
                       as int,
-            expectedGraduation: null == expectedGraduation
+            expectedGraduation: freezed == expectedGraduation
                 ? _value.expectedGraduation
                 : expectedGraduation // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as String?,
             walletBalanceEgp: null == walletBalanceEgp
                 ? _value.walletBalanceEgp
                 : walletBalanceEgp // ignore: cast_nullable_to_non_nullable
@@ -145,14 +170,17 @@ abstract class _$$StudentImplCopyWith<$Res> implements $StudentCopyWith<$Res> {
   $Res call({
     String id,
     String name,
+    String faculty,
     String major,
+    String academicAdvisor,
+    String nationality,
     int level,
     String university,
     double cumulativeGpa,
     double gpaDelta,
     int creditHoursCompleted,
     int creditHoursTotal,
-    String expectedGraduation,
+    String? expectedGraduation,
     double walletBalanceEgp,
   });
 }
@@ -173,14 +201,17 @@ class __$$StudentImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
+    Object? faculty = null,
     Object? major = null,
+    Object? academicAdvisor = null,
+    Object? nationality = null,
     Object? level = null,
     Object? university = null,
     Object? cumulativeGpa = null,
     Object? gpaDelta = null,
     Object? creditHoursCompleted = null,
     Object? creditHoursTotal = null,
-    Object? expectedGraduation = null,
+    Object? expectedGraduation = freezed,
     Object? walletBalanceEgp = null,
   }) {
     return _then(
@@ -193,9 +224,21 @@ class __$$StudentImplCopyWithImpl<$Res>
             ? _value.name
             : name // ignore: cast_nullable_to_non_nullable
                   as String,
+        faculty: null == faculty
+            ? _value.faculty
+            : faculty // ignore: cast_nullable_to_non_nullable
+                  as String,
         major: null == major
             ? _value.major
             : major // ignore: cast_nullable_to_non_nullable
+                  as String,
+        academicAdvisor: null == academicAdvisor
+            ? _value.academicAdvisor
+            : academicAdvisor // ignore: cast_nullable_to_non_nullable
+                  as String,
+        nationality: null == nationality
+            ? _value.nationality
+            : nationality // ignore: cast_nullable_to_non_nullable
                   as String,
         level: null == level
             ? _value.level
@@ -221,10 +264,10 @@ class __$$StudentImplCopyWithImpl<$Res>
             ? _value.creditHoursTotal
             : creditHoursTotal // ignore: cast_nullable_to_non_nullable
                   as int,
-        expectedGraduation: null == expectedGraduation
+        expectedGraduation: freezed == expectedGraduation
             ? _value.expectedGraduation
             : expectedGraduation // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as String?,
         walletBalanceEgp: null == walletBalanceEgp
             ? _value.walletBalanceEgp
             : walletBalanceEgp // ignore: cast_nullable_to_non_nullable
@@ -240,14 +283,17 @@ class _$StudentImpl implements _Student {
   const _$StudentImpl({
     required this.id,
     required this.name,
+    required this.faculty,
     required this.major,
+    required this.academicAdvisor,
+    required this.nationality,
     required this.level,
     required this.university,
     required this.cumulativeGpa,
     required this.gpaDelta,
     required this.creditHoursCompleted,
     required this.creditHoursTotal,
-    required this.expectedGraduation,
+    this.expectedGraduation,
     required this.walletBalanceEgp,
   });
 
@@ -256,7 +302,13 @@ class _$StudentImpl implements _Student {
   @override
   final String name;
   @override
+  final String faculty;
+  @override
   final String major;
+  @override
+  final String academicAdvisor;
+  @override
+  final String nationality;
   @override
   final int level;
   @override
@@ -269,14 +321,18 @@ class _$StudentImpl implements _Student {
   final int creditHoursCompleted;
   @override
   final int creditHoursTotal;
+
+  /// Null when not yet known — a real projected graduation date isn't
+  /// something to guess at from a partial transcript. See PROJECT_RULES.md
+  /// §5: no fabricated data.
   @override
-  final String expectedGraduation;
+  final String? expectedGraduation;
   @override
   final double walletBalanceEgp;
 
   @override
   String toString() {
-    return 'Student(id: $id, name: $name, major: $major, level: $level, university: $university, cumulativeGpa: $cumulativeGpa, gpaDelta: $gpaDelta, creditHoursCompleted: $creditHoursCompleted, creditHoursTotal: $creditHoursTotal, expectedGraduation: $expectedGraduation, walletBalanceEgp: $walletBalanceEgp)';
+    return 'Student(id: $id, name: $name, faculty: $faculty, major: $major, academicAdvisor: $academicAdvisor, nationality: $nationality, level: $level, university: $university, cumulativeGpa: $cumulativeGpa, gpaDelta: $gpaDelta, creditHoursCompleted: $creditHoursCompleted, creditHoursTotal: $creditHoursTotal, expectedGraduation: $expectedGraduation, walletBalanceEgp: $walletBalanceEgp)';
   }
 
   @override
@@ -286,7 +342,12 @@ class _$StudentImpl implements _Student {
             other is _$StudentImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.faculty, faculty) || other.faculty == faculty) &&
             (identical(other.major, major) || other.major == major) &&
+            (identical(other.academicAdvisor, academicAdvisor) ||
+                other.academicAdvisor == academicAdvisor) &&
+            (identical(other.nationality, nationality) ||
+                other.nationality == nationality) &&
             (identical(other.level, level) || other.level == level) &&
             (identical(other.university, university) ||
                 other.university == university) &&
@@ -309,7 +370,10 @@ class _$StudentImpl implements _Student {
     runtimeType,
     id,
     name,
+    faculty,
     major,
+    academicAdvisor,
+    nationality,
     level,
     university,
     cumulativeGpa,
@@ -333,14 +397,17 @@ abstract class _Student implements Student {
   const factory _Student({
     required final String id,
     required final String name,
+    required final String faculty,
     required final String major,
+    required final String academicAdvisor,
+    required final String nationality,
     required final int level,
     required final String university,
     required final double cumulativeGpa,
     required final double gpaDelta,
     required final int creditHoursCompleted,
     required final int creditHoursTotal,
-    required final String expectedGraduation,
+    final String? expectedGraduation,
     required final double walletBalanceEgp,
   }) = _$StudentImpl;
 
@@ -349,7 +416,13 @@ abstract class _Student implements Student {
   @override
   String get name;
   @override
+  String get faculty;
+  @override
   String get major;
+  @override
+  String get academicAdvisor;
+  @override
+  String get nationality;
   @override
   int get level;
   @override
@@ -362,8 +435,12 @@ abstract class _Student implements Student {
   int get creditHoursCompleted;
   @override
   int get creditHoursTotal;
+
+  /// Null when not yet known — a real projected graduation date isn't
+  /// something to guess at from a partial transcript. See PROJECT_RULES.md
+  /// §5: no fabricated data.
   @override
-  String get expectedGraduation;
+  String? get expectedGraduation;
   @override
   double get walletBalanceEgp;
 

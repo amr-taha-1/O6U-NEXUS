@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../shared/data/student_repository.dart';
+import '../../../../shared/domain/student.dart';
 
 class FaceIdScreen extends ConsumerStatefulWidget {
   const FaceIdScreen({super.key});
@@ -34,7 +35,7 @@ class _FaceIdScreenState extends ConsumerState<FaceIdScreen> {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final text = context.textStyles;
-    final firstName = ref.watch(currentStudentProvider).name.split(' ').first;
+    final firstName = ref.watch(currentStudentProvider).valueOrNull?.firstName ?? 'Student';
 
     return ClipRect(
       child: BackdropFilter(

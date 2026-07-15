@@ -6,7 +6,7 @@ import '../../../../core/widgets/widgets.dart';
 import '../../application/academics_providers.dart';
 import '../../domain/assignment.dart';
 
-/// Not in the design reference � a list of assignments across courses,
+/// Not in the design reference — a list of assignments across courses,
 /// mirroring `course_details_sheet.dart`'s "Materials" list pattern.
 class AssignmentsScreen extends ConsumerWidget {
   const AssignmentsScreen({super.key});

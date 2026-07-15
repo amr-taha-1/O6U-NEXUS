@@ -1,0 +1,99 @@
+{
+  "semesters": [
+    {
+      "label": "Fall 2023/2024",
+      "gpa": 1.67,
+      "hours": 18,
+      "points": 30.1,
+      "courses": [
+        { "code": "BSM114", "name": "Physics", "grade": "F", "hours": 3, "points": 0.0 },
+        { "code": "BSM115", "name": "Fund of Management & Economics", "grade": "D", "hours": 3, "points": 3.0 },
+        { "code": "URM112", "name": "Introduction to Computers", "grade": "C", "hours": 3, "points": 6.0 },
+        { "code": "BSM113", "name": "English Language 1", "grade": "D", "hours": 2, "points": 2.0 },
+        { "code": "URM421", "name": "Communication Skills", "grade": "B", "hours": 2, "points": 6.0 },
+        { "code": "CSM117", "name": "Introduction to Programming", "grade": "B-", "hours": 4, "points": 10.8 },
+        { "code": "URM111", "name": "Human Rights", "grade": "C+", "hours": 1, "points": 2.3 }
+      ]
+    },
+    {
+      "label": "Spring 2023/2024",
+      "gpa": 3.15,
+      "hours": 18,
+      "points": 56.7,
+      "courses": [
+        { "code": "URE124", "name": "Modern Egyptian History", "grade": "PASS", "hours": null, "points": null },
+        { "code": "URM122", "name": "Marketing & Digital Strategy", "grade": "A", "hours": null, "points": null },
+        { "code": "BSM123", "name": "Discrete Mathematics", "grade": "A-", "hours": null, "points": null },
+        { "code": "URM221", "name": "Creative & Scientific Thinking", "grade": "A-", "hours": null, "points": null },
+        { "code": "CSM127", "name": "Object Oriented Programming", "grade": "B+", "hours": null, "points": null },
+        { "code": "BSM124", "name": "English Language 2", "grade": "D+", "hours": null, "points": null },
+        { "code": "BSM125", "name": "Digital Systems", "grade": "B", "hours": null, "points": null },
+        { "code": "URM121", "name": "Entrepreneurship & Innovation", "grade": "B-", "hours": null, "points": null }
+      ]
+    },
+    {
+      "label": "Fall 2024/2025",
+      "gpa": 2.96,
+      "hours": 14,
+      "points": 41.4,
+      "courses": [
+        { "code": "CSM216", "name": "Data Structures", "grade": "B+", "hours": null, "points": null },
+        { "code": "URM211", "name": "Natural Resources & Sustainability", "grade": "B+", "hours": null, "points": null },
+        { "code": "BSM213", "name": "Project Management Professional", "grade": "B+", "hours": null, "points": null },
+        { "code": "CSM215", "name": "Microprocessors", "grade": "W", "hours": null, "points": null },
+        { "code": "BSM114", "name": "Physics", "grade": "C", "hours": null, "points": null },
+        { "code": "BSM214", "name": "Probability & Statistics", "grade": "B", "hours": null, "points": null }
+      ]
+    },
+    {
+      "label": "Spring 2024/2025",
+      "gpa": 2.48,
+      "hours": 12,
+      "points": 29.8,
+      "courses": [
+        { "code": "CSM225", "name": "Computer Security", "grade": "B-", "hours": null, "points": null },
+        { "code": "CSM223", "name": "Visual Programming", "grade": "C-", "hours": null, "points": null },
+        { "code": "CSM215", "name": "Microprocessors", "grade": "W", "hours": null, "points": null },
+        { "code": "URM321", "name": "Research Methods & Ethics", "grade": "C+", "hours": null, "points": null },
+        { "code": "ISM226", "name": "Database Management Systems I", "grade": "B", "hours": null, "points": null },
+        { "code": "BSM222", "name": "Mathematics III", "grade": "W", "hours": null, "points": null }
+      ]
+    },
+    {
+      "label": "Summer 2024/2025",
+      "gpa": 1.38,
+      "hours": 5,
+      "points": 6.9,
+      "courses": [
+        { "code": "BSM222", "name": "Mathematics III", "grade": "WF", "hours": null, "points": null },
+        { "code": "BSM212", "name": "Electronics", "grade": "C+", "hours": null, "points": null }
+      ]
+    },
+    {
+      "label": "Fall 2025/2026",
+      "gpa": 2.86,
+      "hours": 9,
+      "points": 25.7,
+      "courses": [
+        { "code": "BSM222", "name": "Mathematics III", "grade": "B-", "hours": null, "points": null },
+        { "code": "ISM312", "name": "Operations Research I", "grade": "A-", "hours": null, "points": null },
+        { "code": "CSM215", "name": "Microprocessors", "grade": "C+", "hours": null, "points": null }
+      ]
+    },
+    {
+      "label": "Spring 2025/2026",
+      "gpa": 2.61,
+      "hours": 16,
+      "points": 41.7,
+      "courses": [
+        { "code": "CSM224", "name": "Computer Architecture", "grade": "B-", "hours": null, "points": null },
+        { "code": "ISM314", "name": "Systems Analysis and Design", "grade": "C", "hours": null, "points": null },
+        { "code": "ISM315", "name": "Information Systems", "grade": "C+", "hours": null, "points": null },
+        { "code": "URE228", "name": "Sociology of Work", "grade": "NOD", "hours": null, "points": null },
+        { "code": "ISM322", "name": "Operations Research II", "grade": "B+", "hours": null, "points": null },
+        { "code": "URE326", "name": "Introduction to Environmental Biology", "grade": "NOD", "hours": null, "points": null },
+        { "code": "ISM324", "name": "Information Retrieval", "grade": "B-", "hours": null, "points": null }
+      ]
+    }
+  ]
+}

@@ -20,42 +20,48 @@ class GraduationPlannerScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final student = ref.watch(currentStudentProvider);
+    final studentAsync = ref.watch(currentStudentProvider);
     final steps = ref.watch(aiGraduationStepsProvider);
 
     return AppPushScaffold(
       title: 'Graduation Planner',
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
-            child: _NexusHero(hoursLeft: student.creditHoursRemaining, graduationDate: student.expectedGraduation),
-          ),
-          const SectionHeader('Your path, as Nexus sees it'),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
-            child: Column(
-              children: [
-                for (var i = 0; i < steps.length; i++)
-                  _StepRow(step: steps[i], isLast: i == steps.length - 1, filled: i < 4, lineOn: i < 3),
-              ],
+      body: studentAsync.when(
+        data: (student) => Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+              child: _NexusHero(hoursLeft: student.creditHoursRemaining),
             ),
-          ),
-          const Padding(
-            padding: EdgeInsets.fromLTRB(AppSpacing.screenMargin, 6, AppSpacing.screenMargin, 0),
-            child: _BottleneckCard(),
-          ),
-        ],
+            const SectionHeader('Your path, as Nexus sees it'),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+              child: Column(
+                children: [
+                  for (var i = 0; i < steps.length; i++)
+                    _StepRow(step: steps[i], isLast: i == steps.length - 1, filled: i < 4, lineOn: i < 3),
+                ],
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(AppSpacing.screenMargin, 6, AppSpacing.screenMargin, 0),
+              child: _BottleneckCard(),
+            ),
+          ],
+        ),
+        loading: () => const Padding(
+          padding: EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+          child: SkeletonListTile(isFirst: true),
+        ),
+        error: (error, stackTrace) => StatusPlaceholder.error(message: 'Couldn\'t load your record: $error'),
       ),
     );
   }
 }
 
 class _NexusHero extends StatelessWidget {
-  const _NexusHero({required this.hoursLeft, required this.graduationDate});
+  const _NexusHero({required this.hoursLeft});
   final int hoursLeft;
-  final String graduationDate;
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +98,7 @@ class _NexusHero extends StatelessWidget {
                     Text('96% on-time', style: text.title3),
                     const SizedBox(height: 2),
                     Text(
-                      '$hoursLeft hours left · graduate $graduationDate',
+                      '$hoursLeft hours left at your current pace',
                       style: text.subhead.copyWith(fontSize: 13.5),
                     ),
                   ],

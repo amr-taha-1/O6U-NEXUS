@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/widgets.dart';
+import '../../../../features/transcript/data/transcript_repository.dart';
 import '../../../../shared/data/course_repository.dart';
 import '../../../../shared/data/student_repository.dart';
 import '../../../../shared/domain/course.dart';
@@ -18,151 +19,191 @@ class AcademicsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colors = context.colors;
-    final text = context.textStyles;
-    final student = ref.watch(currentStudentProvider);
+    final studentAsync = ref.watch(currentStudentProvider);
     final courses = ref.watch(coursesProvider);
-    final gpaTrend = ref.watch(gpaTrendProvider);
+    final gpaTrend = ref.watch(semesterGpaTrendProvider).valueOrNull ?? const [];
 
     return LargeTitleScaffold(
       title: 'Academics',
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
-            child: AppCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Cumulative GPA', style: text.subhead.copyWith(fontWeight: FontWeight.w500)),
-                            const SizedBox(height: 2),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.baseline,
-                              textBaseline: TextBaseline.alphabetic,
-                              children: [
-                                Text(student.cumulativeGpa.toStringAsFixed(2), style: text.monoTitle),
-                                const SizedBox(width: 8),
-                                Row(
-                                  children: [
-                                    Icon(CupertinoIcons.arrow_up_right, size: 13, color: colors.success),
-                                    Text(
-                                      '+${student.gpaDelta.toStringAsFixed(2)}',
-                                      style: text.subhead.copyWith(color: colors.success, fontWeight: FontWeight.w700, fontSize: 14),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      GpaSparkline(values: gpaTrend, color: colors.accent),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  AppProgressBar(value: student.degreeProgress, color: colors.accent, height: 6),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Level ${student.level} · ${student.creditHoursCompleted} of ${student.creditHoursTotal} hours',
-                        style: text.footnote,
-                      ),
-                      Text(
-                        '${student.creditHoursRemaining} hrs left',
-                        style: text.monoSmall.copyWith(color: colors.accent, fontSize: 12.5),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SectionHeader('This semester'),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
-            child: AppCard(
-              padding: EdgeInsets.zero,
-              child: Column(
-                children: [
-                  for (var i = 0; i < courses.length; i++)
-                    _CourseRow(course: courses[i], isFirst: i == 0, onTap: () => showCourseDetailsSheet(context, courses[i])),
-                ],
-              ),
-            ),
-          ),
-          const SectionHeader('Records'),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
-            child: AppCard(
-              padding: EdgeInsets.zero,
-              child: Column(
-                children: [
-                  NavRowCard(
-                    isFirst: true,
-                    icon: CupertinoIcons.calendar,
-                    iconColor: colors.info,
-                    title: 'Schedule',
-                    subtitle: 'Week 9 · 2 rooms changed',
-                    onTap: () => context.push(AppRoutes.academicsSchedule),
-                  ),
-                  NavRowCard(
-                    icon: CupertinoIcons.timer,
-                    iconColor: colors.due,
-                    title: 'Exam Schedule',
-                    subtitle: 'Next: MA201 midterm · 3 days',
-                    onTap: () => context.push(AppRoutes.academicsExams),
-                  ),
-                  NavRowCard(
-                    icon: CupertinoIcons.chart_bar,
-                    iconColor: colors.accent,
-                    title: 'Grades',
-                    subtitle: 'Semester GPA 3.24',
-                    onTap: () => context.push(AppRoutes.academicsGrades),
-                  ),
-                  NavRowCard(
-                    icon: CupertinoIcons.doc_checkmark,
-                    iconColor: colors.success,
-                    title: 'Assignments',
-                    subtitle: '1 due Sunday · CS402',
-                    onTap: () => context.push(AppRoutes.academicsAssignments),
-                  ),
-                  NavRowCard(
-                    icon: CupertinoIcons.gauge,
-                    iconColor: colors.success,
-                    title: 'Attendance',
-                    subtitle: '92% · one course below the line',
-                    onTap: () => context.push(AppRoutes.academicsAttendance),
-                  ),
-                  NavRowCard(
-                    icon: CupertinoIcons.doc_text,
-                    iconColor: colors.info,
-                    title: 'Transcript',
-                    subtitle: 'Official · exportable as PDF',
-                    onTap: () => context.push(AppRoutes.academicsTranscript),
-                  ),
-                  NavRowCard(
-                    icon: CupertinoIcons.flag,
-                    iconColor: colors.warning,
-                    title: 'Graduation Progress',
-                    subtitle: '96% on-time · Aug 2027',
-                    onTap: () => context.push(AppRoutes.academicsGraduation),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
+      body: studentAsync.when(
+        data: (student) => _AcademicsBody(student: student, courses: courses, gpaTrend: gpaTrend),
+        loading: () => const Padding(
+          padding: EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+          child: SkeletonListTile(isFirst: true),
+        ),
+        error: (error, stackTrace) => StatusPlaceholder.error(message: 'Couldn\'t load your academic record: $error'),
       ),
+    );
+  }
+}
+
+class _AcademicsBody extends StatelessWidget {
+  const _AcademicsBody({required this.student, required this.courses, required this.gpaTrend});
+  final Student student;
+  final List<Course> courses;
+  final List<double> gpaTrend;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final text = context.textStyles;
+    final positive = student.gpaDelta >= 0;
+    final deltaColor = positive ? colors.success : colors.danger;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+          child: AppCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Cumulative GPA', style: text.subhead.copyWith(fontWeight: FontWeight.w500)),
+                          const SizedBox(height: 2),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
+                            children: [
+                              Text(student.cumulativeGpa.toStringAsFixed(2), style: text.monoTitle),
+                              const SizedBox(width: 8),
+                              Row(
+                                children: [
+                                  Icon(
+                                    positive ? CupertinoIcons.arrow_up_right : CupertinoIcons.arrow_down_right,
+                                    size: 13,
+                                    color: deltaColor,
+                                  ),
+                                  Text(
+                                    '${positive ? '+' : '−'}${student.gpaDelta.abs().toStringAsFixed(2)}',
+                                    style: text.subhead.copyWith(color: deltaColor, fontWeight: FontWeight.w700, fontSize: 14),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Text('vs. last semester', style: text.caption1.copyWith(color: colors.textDim, fontWeight: FontWeight.w400)),
+                        ],
+                      ),
+                    ),
+                    if (gpaTrend.isNotEmpty)
+                      GpaSparkline(
+                        values: gpaTrend,
+                        color: colors.accent,
+                        min: 1.0,
+                        max: 4.0,
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                AppProgressBar(value: student.degreeProgress, color: colors.accent, height: 6),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Level ${student.level} · ${student.creditHoursCompleted} of ${student.creditHoursTotal} hours',
+                      style: text.footnote,
+                    ),
+                    Text(
+                      '${student.creditHoursRemaining} hrs left',
+                      style: text.monoSmall.copyWith(color: colors.accent, fontSize: 12.5),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SectionHeader('This semester'),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+          child: AppCard(
+            padding: EdgeInsets.zero,
+            child: Column(
+              children: [
+                for (var i = 0; i < courses.length; i++)
+                  _CourseRow(course: courses[i], isFirst: i == 0, onTap: () => showCourseDetailsSheet(context, courses[i])),
+              ],
+            ),
+          ),
+        ),
+        const SectionHeader('Records'),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+          child: AppCard(
+            padding: EdgeInsets.zero,
+            child: Column(
+              children: [
+                NavRowCard(
+                  isFirst: true,
+                  icon: CupertinoIcons.calendar,
+                  iconColor: colors.info,
+                  title: 'Schedule',
+                  subtitle: 'Week 9 · 2 rooms changed',
+                  onTap: () => context.push(AppRoutes.academicsSchedule),
+                ),
+                NavRowCard(
+                  icon: CupertinoIcons.timer,
+                  iconColor: colors.due,
+                  title: 'Exam Schedule',
+                  subtitle: 'Next: MA201 midterm · 3 days',
+                  onTap: () => context.push(AppRoutes.academicsExams),
+                ),
+                NavRowCard(
+                  icon: CupertinoIcons.chart_bar,
+                  iconColor: colors.accent,
+                  title: 'Grades',
+                  subtitle: 'Semester GPA 3.24',
+                  onTap: () => context.push(AppRoutes.academicsGrades),
+                ),
+                NavRowCard(
+                  icon: CupertinoIcons.doc_checkmark,
+                  iconColor: colors.success,
+                  title: 'Assignments',
+                  subtitle: '1 due Sunday · CS402',
+                  onTap: () => context.push(AppRoutes.academicsAssignments),
+                ),
+                NavRowCard(
+                  icon: CupertinoIcons.gauge,
+                  iconColor: colors.success,
+                  title: 'Attendance',
+                  subtitle: '92% · one course below the line',
+                  onTap: () => context.push(AppRoutes.academicsAttendance),
+                ),
+                NavRowCard(
+                  icon: CupertinoIcons.doc_text,
+                  iconColor: colors.info,
+                  title: 'Transcript',
+                  subtitle: '${student.cumulativeGpa.toStringAsFixed(2)} CGPA · official record',
+                  onTap: () => context.push(AppRoutes.academicsTranscript),
+                ),
+                NavRowCard(
+                  icon: CupertinoIcons.chart_bar_alt_fill,
+                  iconColor: colors.due,
+                  title: 'Academic Analytics',
+                  subtitle: 'Trends, grade mix, repeated courses',
+                  onTap: () => context.push(AppRoutes.academicsAnalytics),
+                ),
+                NavRowCard(
+                  icon: CupertinoIcons.flag,
+                  iconColor: colors.warning,
+                  title: 'Degree Progress',
+                  subtitle: '${student.creditHoursRemaining} hours remaining',
+                  onTap: () => context.push(AppRoutes.academicsGraduation),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

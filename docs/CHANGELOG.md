@@ -82,7 +82,51 @@ All notable changes to O6U Nexus are recorded here. Format loosely follows
   `Notifier<ThemeMode>`) wired into `MaterialApp.router`'s `themeMode`, surfaced as a switch on
   the Settings screen.
 
+### Added — Real data
+- The signed-in student's academic record is now real O6U data (student 23017930), read from
+  `assets/data/{student,transcript,degree_progress,dashboard}.json` via `JsonAssetLoader` and
+  exposed as `FutureProvider`s (`currentStudentProvider`, `transcriptProvider`,
+  `degreeProgressProvider`, `dashboardDataProvider`) — see `docs/Architecture.md` "Real data" for
+  the full swap-to-API plan. A temporary local data source until October 6 University provides an
+  official API; every screen already behaves as if wired to one.
+- New models: `TranscriptCourse`, `DegreeProgress`/`DegreeRequirementCategory`, `DashboardData`/
+  `QuickAction`; `Student` extended with `faculty`, `academicAdvisor`, `nationality`, a nullable
+  `expectedGraduation`; `Semester` extended with `courses`/`points`.
+- `TranscriptScreen` rebuilt on real data: per-semester cards, color-coded grade chips
+  (`features/transcript/presentation/grade_colors.dart`) matching the official A/B/C/D/F/W/PASS/
+  NOD legend. Per-course hours/points render as `—` where the source transcript doesn't have that
+  granularity (only Fall 2023/2024 does) — never guessed.
+- `GraduationScreen` rebuilt as "Degree Progress": real requirement-category breakdown
+  (University/College/Department Mandatory/Department Electives) instead of the old fictional
+  audit. `GraduationPlannerScreen` (AI) stays independently fictional by design.
+- New `AcademicAnalyticsScreen` (`/academics/analytics`): CGPA, semester GPA trend
+  (`GpaSparkline`), hours completed/remaining, animated grade-distribution bars, and repeated
+  courses — all derived from the real transcript (`features/analytics/application/
+  analytics_providers.dart`).
+- `HomeScreen`'s new `DashboardSection`: real greeting, faculty/major/level/advisor, a degree-
+  completion `ProgressRing`, and data-backed quick actions.
+- Every other screen touching student data (`GradesScreen`'s cumulative GPA, `ProfileScreen`,
+  `StudentIdScreen`, `FaceIdScreen`'s greeting, `ResumeBuilderScreen`, `GpaSimulatorScreen`,
+  `GraduationPlannerScreen`, `glance_grid.dart`'s credits-left tile) now gates on
+  `currentStudentProvider`'s `AsyncValue` instead of reading synchronously.
+- Current-semester screens with no real-data equivalent (Schedule, Attendance, Assignments, Exam
+  Schedule, the GPA Simulator's course picker) intentionally keep their existing fictional data.
+
 ### Fixed
+- `AppProgressBar` (`core/widgets/app_progress_bar.dart`) rendered every fill as invisible: its
+  inner `FractionallySizedBox` only set `widthFactor`, leaving `heightFactor` null, so the
+  `DecoratedBox` fill collapsed to zero height regardless of the `value` passed in. Pre-existing —
+  surfaced by visually verifying the new Degree Progress and Academic Analytics screens, whose
+  category/graduation bars all looked empty even at 100%. Fixed by setting `heightFactor: 1`; this
+  also fixes the (until-now invisible) bars on Attendance's per-course rows and the Academics hub
+  hero.
+- `DashboardSection`'s `_StatRow` (CGPA/Registered hours/Remaining/Academic status tiles on Home)
+  overflowed its `GridView.count` cells by ~2px in debug builds (`childAspectRatio: 1.9` was too
+  tight for three lines of text). Loosened to `1.65`.
+- Six files (`academics_providers.dart`, `assignment.dart`, `assignments_screen.dart`,
+  `attendance_screen.dart`, `exam_schedule_screen.dart`, `grades_screen.dart`) had U+FFFD
+  replacement-character corruption in comments/strings, a different corruption class from the
+  double-encoding fixed previously — replaced with the correct em dash.
 - `AppSearchBar`'s `TextField` asserts a `Material` ancestor at build time; nothing in the
   Cupertino-styled scaffold chain (`AppShell` → `LargeTitleScaffold`/`AppPushScaffold`) provided
   one, so any screen rendering the widget — including the already-shipped `CampusScreen` hub —
@@ -100,4 +144,6 @@ All notable changes to O6U Nexus are recorded here. Format loosely follows
   Exchange, Internships, and Freelance — not in the reference — are dedicated pushed screens.
 
 All 38 screens from the original brief are accounted for (35 as dedicated screens, 3 consolidated
-per the notes above). `flutter analyze`: 0 issues. `flutter test`: 16/16 passing.
+per the notes above), plus the new Academic Analytics screen. Verified end-to-end on-device
+(Android emulator): Home, Transcript, Degree Progress, and Academic Analytics all render the real
+data correctly. `flutter analyze`: 0 issues. `flutter test`: 17/17 passing.

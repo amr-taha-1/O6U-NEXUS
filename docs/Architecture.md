@@ -3,9 +3,10 @@
 ## Overview
 
 O6U Nexus is a Flutter client built with a feature-first Clean Architecture. There is no backend
-in this sprint: every "data source" is an in-memory repository seeded with realistic dummy data,
-sitting behind the same interface a real HTTP/GraphQL repository would implement later. Swapping
-dummy data for a live API is a `data/` layer change only — nothing in `presentation/` or
+in this sprint: every "data source" is a repository sitting behind the same interface a real
+HTTP/GraphQL repository would implement later. Most repositories return in-memory dummy data;
+the student's academic record (see "Real data" below) reads from real O6U data instead. Swapping
+either kind for a live API is a `data/` layer change only — nothing in `presentation/` or
 `application/` should need to move.
 
 ## Layers
@@ -73,6 +74,29 @@ logical pixels. `core/utils/responsive.dart` exposes `context.isCompact / isMedi
 helpers used to switch list layouts (single column → grid) and to cap sheet/dialog widths on
 larger surfaces, without every screen re-deriving breakpoint math.
 
+## Real data
+
+The signed-in student's academic record — profile, transcript, degree-requirement audit, and
+dashboard summary — is real O6U data (student 23017930), not fictional. It's a temporary local
+data source until October 6 University provides an official API, but it's wired exactly as that
+API integration will be: JSON files under `assets/data/` (`student.json`, `transcript.json`,
+`degree_progress.json`, `dashboard.json`) are read through `JsonAssetLoader`
+(`core/services/json_asset_loader.dart`) by repositories exposing `FutureProvider`s
+(`currentStudentProvider`, `transcriptProvider`, `degreeProgressProvider`, `dashboardDataProvider`),
+consumed by screens via `AsyncValue.when(data:, loading:, error:)` — the same shape a real HTTP call
+would take. When the official API exists, only these repositories' fetch calls change (JSON read →
+HTTP call); no provider, screen, or model changes.
+
+Missing per-course hours/points (only Fall 2023/2024 has that granularity in the source transcript)
+render as `—` rather than being guessed. `Student.expectedGraduation` is nullable for the same
+reason — no graduation date was given, so none is fabricated.
+
+Everything else (current-semester Schedule, Attendance, Assignments, Exam Schedule, the GPA
+Simulator's course picker, Campus marketplace/social features) is still fictional dummy data — see
+"Overview" above. `features/academics/.../transcript_course.dart` is deliberately named
+`TranscriptCourse`, not `Course`, to avoid colliding with the existing (dummy, current-semester)
+`shared/domain/course.dart` — the two are unrelated models for unrelated data.
+
 ## Testing
 
 - `test/core/` — theme/util unit tests.
@@ -90,3 +114,17 @@ tree (`await tester.pumpWidget(const SizedBox.shrink());`) so any animation cont
 before the test ends. See `test/widget_test.dart` for a worked example. Never reach for
 `pumpAndSettle()` on a screen with a repeating (`onPlay: (c) => c.repeat()`) animation — it will
 hang forever waiting for a frame that never stops being scheduled.
+
+**Real-data `FutureProvider`s + widget tests**: screens reading through `assets/data/*.json` (see
+"Real data" below) resolve via a genuine `rootBundle.loadString` platform-channel round trip, not a
+fake-clock `Timer` — so pumping frames to "wait it out" is unreliable (the number of pumps needed
+isn't fixed, and racing it against other tests in the same file is flaky). Worse, `flutter_test`'s
+asset-bundle channel only tolerates **one** real disk-backed asset load per test *isolate* — a
+second independent `rootBundle.loadString` call anywhere else in the same test file hangs forever,
+regardless of which screen triggers it. The fix used throughout `test/features/*/presentation/`:
+create a single `ProviderContainer`, `await container.read(xProvider.future)` for every real-data
+provider the file's screens touch (once, in `setUpAll` if the file has more than one such test),
+then hand that same container to each widget via `UncontrolledProviderScope` instead of a fresh
+`ProviderScope`. The data is available synchronously on the first build, and only one real read
+ever happens per file. See `test/features/academics/presentation/academics_real_data_screens_test.dart`
+and `test/features/ai/presentation/ai_sub_screens_test.dart` for worked examples.

@@ -1,9 +1,12 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/widgets.dart';
+import '../../../../shared/data/student_repository.dart';
+import '../../../../shared/domain/student.dart';
 
 class _GlanceStat {
   const _GlanceStat(this.label, this.value, this.color, this.sub);
@@ -13,22 +16,32 @@ class _GlanceStat {
   final String sub;
 }
 
-final _stats = [
+final _fictionalStats = [
   _GlanceStat('Attendance', '92%', (c) => c.success, 'across 5 courses'),
   _GlanceStat('Next exam', '3 days', (c) => c.warning, 'MA201 · midterm'),
   _GlanceStat('Deadlines', '2 open', (c) => c.due, 'both due Sunday'),
-  _GlanceStat('Credits left', '24 hrs', (c) => c.info, 'graduate Aug 2027'),
 ];
 
 /// Four numbers a student actually re-checks. Anything else belongs in
-/// Academics.
-class GlanceGrid extends StatelessWidget {
+/// Academics. "Credits left" is real (from the student's actual record);
+/// the other three have no real-data equivalent yet, so they stay on the
+/// existing fictional current-semester dataset.
+class GlanceGrid extends ConsumerWidget {
   const GlanceGrid({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
     final text = context.textStyles;
+    final student = ref.watch(currentStudentProvider).valueOrNull;
+    final creditsLeft = _GlanceStat(
+      'Credits left',
+      student == null ? '—' : '${student.creditHoursRemaining} hrs',
+      (c) => c.info,
+      'toward graduation',
+    );
+    final stats = [..._fictionalStats, creditsLeft];
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
       child: GridView.count(
@@ -39,7 +52,7 @@ class GlanceGrid extends StatelessWidget {
         crossAxisSpacing: 10,
         childAspectRatio: 1.7,
         children: [
-          for (final stat in _stats)
+          for (final stat in stats)
             AppCard(
               onTap: () => context.go(AppRoutes.academics),
               padding: const EdgeInsets.all(14),

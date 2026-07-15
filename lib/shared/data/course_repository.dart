@@ -1,11 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../domain/course.dart';
-import '../domain/semester.dart';
 
-/// In-memory dummy repository backing every Academics screen (Portal,
-/// Schedule, Grades, Attendance, Transcript, course-details sheet) and the
-/// Home dashboard, so all of them agree on the same five courses.
+/// In-memory dummy repository backing the fictional current-semester
+/// screens (Schedule, Attendance, Assignments, GPA Simulator's course
+/// picker) that have no real-data equivalent yet — see
+/// `features/transcript/data/transcript_repository.dart` for the real,
+/// JSON-backed official transcript.
 class CourseRepository {
   const CourseRepository();
 
@@ -61,22 +62,11 @@ class CourseRepository {
           room: 'Hall D3',
         ),
       ];
-
-  List<Semester> getSemesters() => const [
-        Semester(label: 'Level 1 · Fall', gpa: 2.62, creditHours: 15),
-        Semester(label: 'Level 1 · Spring', gpa: 2.80, creditHours: 15),
-        Semester(label: 'Level 2 · Fall', gpa: 2.68, creditHours: 16),
-        Semester(label: 'Level 2 · Spring', gpa: 2.88, creditHours: 16),
-        Semester(label: 'Level 3 · Fall', gpa: 2.94, creditHours: 17),
-        Semester(label: 'Level 3 · Spring', gpa: 3.12, creditHours: 17),
-      ];
 }
 
 final courseRepositoryProvider = Provider<CourseRepository>((ref) => const CourseRepository());
 
 final coursesProvider = Provider<List<Course>>((ref) => ref.watch(courseRepositoryProvider).getCurrentCourses());
-
-final semestersProvider = Provider<List<Semester>>((ref) => ref.watch(courseRepositoryProvider).getSemesters());
 
 final courseByCodeProvider = Provider.family<Course?, String>((ref, code) {
   final courses = ref.watch(coursesProvider);

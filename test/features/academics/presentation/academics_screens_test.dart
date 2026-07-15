@@ -7,13 +7,20 @@ import 'package:o6u_nexus/features/academics/presentation/screens/assignments_sc
 import 'package:o6u_nexus/features/academics/presentation/screens/attendance_screen.dart';
 import 'package:o6u_nexus/features/academics/presentation/screens/exam_schedule_screen.dart';
 import 'package:o6u_nexus/features/academics/presentation/screens/grades_screen.dart';
-import 'package:o6u_nexus/features/academics/presentation/screens/graduation_screen.dart';
 import 'package:o6u_nexus/features/academics/presentation/screens/schedule_screen.dart';
-import 'package:o6u_nexus/features/academics/presentation/screens/transcript_screen.dart';
 
 /// One smoke test per Academics pushed sub-screen: pumps the widget inside a
 /// [ProviderScope] + [MaterialApp], asserts key content renders, no
 /// exceptions. See docs/Architecture.md "Testing".
+///
+/// TranscriptScreen and GraduationScreen (real-data screens) live in their
+/// own file (academics_real_data_screens_test.dart). `flutter_test`'s
+/// asset-bundle platform channel only tolerates one real disk-backed asset
+/// load per isolate — GradesScreen's real `currentStudentProvider` read
+/// would be the first, and a *second* one (Transcript/Graduation) in the
+/// same isolate never resolves. Splitting the files sidesteps that
+/// flutter_test-only interaction — see academics_real_data_screens_test.dart
+/// and docs/Architecture.md "Testing".
 Future<void> _pump(WidgetTester tester, Widget screen) {
   return tester.pumpWidget(
     ProviderScope(
@@ -49,21 +56,9 @@ void main() {
     expect(find.textContaining('MA201'), findsWidgets);
   });
 
-  testWidgets('TranscriptScreen renders the cumulative GPA and export button', (tester) async {
-    await _pump(tester, const TranscriptScreen());
-    expect(find.text('Transcript'), findsWidgets);
-    expect(find.text('Export official PDF'), findsOneWidget);
-  });
-
   testWidgets('AssignmentsScreen renders CS402 Assignment 5', (tester) async {
     await _pump(tester, const AssignmentsScreen());
     expect(find.text('Assignments'), findsWidgets);
     expect(find.text('Assignment 5'), findsOneWidget);
-  });
-
-  testWidgets('GraduationScreen renders the step timeline and bottleneck card', (tester) async {
-    await _pump(tester, const GraduationScreen());
-    expect(find.text('Graduation Progress'), findsWidgets);
-    expect(find.textContaining('CS412'), findsOneWidget);
   });
 }

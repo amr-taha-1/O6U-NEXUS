@@ -1,0 +1,9 @@
+{
+  "greetingName": "Amr",
+  "quickActions": [
+    { "label": "Transcript", "iconName": "doc_text", "route": "/academics/transcript" },
+    { "label": "Analytics", "iconName": "chart_bar_alt_fill", "route": "/academics/analytics" },
+    { "label": "Degree Progress", "iconName": "flag", "route": "/academics/graduation" },
+    { "label": "Student ID", "iconName": "person_crop_square", "route": "/profile/student-id" }
+  ]
+}
