@@ -13,12 +13,14 @@ import '../domain/catalog_course.dart';
 const _nonPassingGrades = {'F', 'WF', 'W'};
 
 /// The set of course codes the student has ever passed, derived live from
-/// the real transcript — a course retaken after a fail/withdraw counts once
-/// it's passed on any attempt. Nothing here is a hardcoded list; see
-/// docs/Architecture.md "Real data".
+/// the real transcript plus transferred credits — a course retaken after a
+/// fail/withdraw counts once it's passed on any attempt, and a transferred
+/// course counts as completed the same as one taken at O6U. Nothing here is
+/// a hardcoded list; see docs/Architecture.md "Real data".
 final completedCourseCodesProvider = FutureProvider<Set<String>>((ref) async {
   final semesters = await ref.watch(transcriptProvider.future);
-  final completed = <String>{};
+  final transferredCredits = await ref.watch(transferredCreditsProvider.future);
+  final completed = <String>{for (final course in transferredCredits) course.code};
   for (final semester in semesters) {
     for (final course in semester.courses) {
       if (!_nonPassingGrades.contains(course.grade.trim().toUpperCase())) {

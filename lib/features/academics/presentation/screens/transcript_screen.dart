@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/widgets.dart';
+import '../../../../features/transcript/application/transcript_enrichment.dart';
 import '../../../../features/transcript/data/transcript_repository.dart';
 import '../../../../features/transcript/domain/transcript_course.dart';
 import '../../../../features/transcript/presentation/grade_colors.dart';
@@ -15,20 +16,31 @@ import '../../../../shared/domain/student.dart';
 /// sits above the semesters, and export is a single, registrar-sealed
 /// button. No backend, so export is simulated. Real data, read from
 /// `assets/data/{student,transcript}.json` exactly as it would be read from
-/// an official O6U API once one exists.
+/// an official O6U API once one exists. Per-course hours/points are
+/// backfilled from the bylaw + grading scale where the raw transcript
+/// doesn't carry them directly — see `enrichedTranscriptProvider`.
 class TranscriptScreen extends ConsumerWidget {
   const TranscriptScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final studentAsync = ref.watch(currentStudentProvider);
-    final transcriptAsync = ref.watch(transcriptProvider);
+    final transcriptAsync = ref.watch(enrichedTranscriptProvider);
+    final transferredCreditsAsync = ref.watch(transferredCreditsProvider);
 
     return AppPushScaffold(
       title: 'Transcript',
       body: studentAsync.when(
         data: (student) => transcriptAsync.when(
-          data: (semesters) => _TranscriptBody(student: student, semesters: semesters),
+          data: (semesters) => transferredCreditsAsync.when(
+            data: (transferredCredits) => _TranscriptBody(
+              student: student,
+              semesters: semesters,
+              transferredCredits: transferredCredits,
+            ),
+            loading: () => const _TranscriptLoading(),
+            error: (error, stackTrace) => StatusPlaceholder.error(message: 'Couldn\'t load your transcript: $error'),
+          ),
           loading: () => const _TranscriptLoading(),
           error: (error, stackTrace) => StatusPlaceholder.error(message: 'Couldn\'t load your transcript: $error'),
         ),
@@ -60,9 +72,10 @@ class _TranscriptLoading extends StatelessWidget {
 }
 
 class _TranscriptBody extends StatelessWidget {
-  const _TranscriptBody({required this.student, required this.semesters});
+  const _TranscriptBody({required this.student, required this.semesters, required this.transferredCredits});
   final Student student;
   final List<Semester> semesters;
+  final List<TranscriptCourse> transferredCredits;
 
   @override
   Widget build(BuildContext context) {
@@ -105,6 +118,21 @@ class _TranscriptBody extends StatelessWidget {
             ),
           ),
         ),
+        if (transferredCredits.isNotEmpty) ...[
+          const SectionHeader('Transferred Credits'),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+            child: AppCard(
+              padding: EdgeInsets.zero,
+              child: Column(
+                children: [
+                  for (var i = 0; i < transferredCredits.length; i++)
+                    _CourseTile(course: transferredCredits[i], isFirst: i == 0),
+                ],
+              ),
+            ),
+          ),
+        ],
         const SectionHeader('Semesters'),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),

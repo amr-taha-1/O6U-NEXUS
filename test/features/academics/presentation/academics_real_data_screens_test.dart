@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:o6u_nexus/core/theme/theme.dart';
+import 'package:o6u_nexus/features/academics/presentation/screens/academics_screen.dart';
 import 'package:o6u_nexus/features/academics/presentation/screens/graduation_screen.dart';
 import 'package:o6u_nexus/features/academics/presentation/screens/schedule_screen.dart';
 import 'package:o6u_nexus/features/academics/presentation/screens/transcript_screen.dart';
@@ -12,7 +13,9 @@ import 'package:o6u_nexus/features/curriculum/presentation/screens/course_catalo
 import 'package:o6u_nexus/features/degree_progress/data/degree_progress_repository.dart';
 import 'package:o6u_nexus/features/schedule/application/schedule_providers.dart';
 import 'package:o6u_nexus/features/schedule/data/schedule_repository.dart';
+import 'package:o6u_nexus/features/transcript/application/transcript_enrichment.dart';
 import 'package:o6u_nexus/features/transcript/data/transcript_repository.dart';
+import 'package:o6u_nexus/shared/data/grade_scale_repository.dart';
 import 'package:o6u_nexus/shared/data/student_repository.dart';
 
 /// Smoke tests for the Academics screens that read real data via
@@ -41,6 +44,9 @@ void main() {
     await _container.read(weeklyScheduleProvider.future);
     await _container.read(nextSessionProvider.future);
     await _container.read(minutesUntilNextSessionProvider.future);
+    await _container.read(gradeScaleProvider.future);
+    await _container.read(enrichedTranscriptProvider.future);
+    await _container.read(transferredCreditsProvider.future);
   });
 
   tearDownAll(() {
@@ -63,6 +69,24 @@ void main() {
     expect(find.text('Export official PDF'), findsOneWidget);
     expect(find.text('2.67'), findsWidgets); // real CGPA
     expect(find.textContaining('Fall 2023/2024'), findsOneWidget);
+    // Transferred Credits: a distinct section above the semester list.
+    expect(find.text('TRANSFERRED CREDITS'), findsOneWidget); // SectionHeader uppercases
+    expect(find.text('Mathematics I'), findsOneWidget);
+    expect(find.text('Mathematics II'), findsOneWidget);
+    // Backfilled from the bylaw + grade scale — Marketing & Digital Strategy
+    // (URM122, 2 hrs) graded A in Spring 2023/2024 had no stored points;
+    // 2 x 4.0 = 8.0, computed live rather than shown as "—".
+    expect(find.text('8.0'), findsOneWidget);
+  });
+
+  testWidgets('AcademicsScreen shows the real latest semester, not the earliest', (tester) async {
+    await pumpReady(tester, const AcademicsScreen());
+    expect(find.text('Academics'), findsWidgets);
+    // The transcript's latest entry is Spring 2025/2026 — must show that,
+    // never the first semester on record (Fall 2023/2024).
+    expect(find.text('SPRING 2025/2026'), findsOneWidget); // SectionHeader uppercases
+    expect(find.text('Information Systems'), findsOneWidget); // a Spring 2025/2026 course
+    expect(find.textContaining('Fall 2023/2024'), findsNothing);
   });
 
   testWidgets('GraduationScreen renders the real degree-audit breakdown', (tester) async {
@@ -75,12 +99,21 @@ void main() {
   testWidgets('ScheduleScreen renders the real weekly timetable with lecture/lab distinction', (tester) async {
     await pumpReady(tester, const ScheduleScreen());
     expect(find.text('Schedule'), findsWidgets);
-    // Both registered courses appear (each has a lecture + a lab session).
+    // All three registered courses appear (9 credit hours total — the
+    // schedule isn't hardcoded to two courses).
     expect(find.text('Geographic Information System'), findsWidgets);
     expect(find.text('Knowledge Management'), findsWidgets);
+    expect(find.text('Database Management Systems 2'), findsWidgets);
     expect(find.text('Sunday'), findsOneWidget);
+    expect(find.text('Wednesday'), findsOneWidget);
     expect(find.text('Lecture'), findsWidgets);
     expect(find.text('Lab'), findsWidgets);
+    // Instructor names, transliterated from the official Arabic timetable.
+    expect(find.text('Dr. Ayman Hassanein'), findsWidgets); // GIS lecture + DBMS2 lecture
+    expect(find.text('Eng. Mohamed Kamal'), findsOneWidget);
+    expect(find.text('Dr. Mohamed Eissa'), findsOneWidget);
+    expect(find.text('Eng. Shady Badeer'), findsOneWidget);
+    expect(find.text('Eng. Ahmed Khaled'), findsOneWidget);
   });
 
   testWidgets('CourseCatalogScreen computes real eligibility from the transcript and bylaw', (tester) async {

@@ -1,5 +1,5 @@
 {
-  "source": "V5-Summer Term ALL Levels- 2025-2026.pdf, Faculty of Computer Science and Information Systems — filtered to the student's own registered summer courses and confirmed sections",
+  "source": "V5-Summer Term ALL Levels- 2025-2026.pdf, Faculty of Computer Science and Information Systems — filtered to the student's own registered summer courses and confirmed sections. Instructor names transliterated from the original Arabic timetable.",
   "sessions": [
     {
       "courseCode": "ISE326A",
@@ -9,7 +9,7 @@
       "startTime": "10:30",
       "endTime": "11:20",
       "room": "6301",
-      "instructor": null
+      "instructor": "Eng. Mohamed Kamal"
     },
     {
       "courseCode": "ISE326A",
@@ -19,7 +19,7 @@
       "startTime": "10:30",
       "endTime": "11:20",
       "room": "6204",
-      "instructor": null
+      "instructor": "Dr. Ayman Hassanein"
     },
     {
       "courseCode": "ISM424",
@@ -29,7 +29,7 @@
       "startTime": "12:30",
       "endTime": "13:20",
       "room": "6019",
-      "instructor": "د. محمد عيسى"
+      "instructor": "Dr. Mohamed Eissa"
     },
     {
       "courseCode": "ISM424",
@@ -39,7 +39,27 @@
       "startTime": "12:30",
       "endTime": "13:20",
       "room": "6117",
-      "instructor": "م.م. شادي بدير"
+      "instructor": "Eng. Shady Badeer"
+    },
+    {
+      "courseCode": "ISM413",
+      "courseName": "Database Management Systems 2",
+      "type": "lecture",
+      "day": "wednesday",
+      "startTime": "08:45",
+      "endTime": "12:10",
+      "room": "6210",
+      "instructor": "Dr. Ayman Hassanein"
+    },
+    {
+      "courseCode": "ISM413",
+      "courseName": "Database Management Systems 2",
+      "type": "lab",
+      "day": "wednesday",
+      "startTime": "12:30",
+      "endTime": "15:55",
+      "room": "6020",
+      "instructor": "Eng. Ahmed Khaled"
     }
   ]
 }

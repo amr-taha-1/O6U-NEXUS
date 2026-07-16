@@ -17,6 +17,16 @@ class TranscriptRepository {
     return [for (final s in semesters) _parseSemester(s as Map<String, dynamic>)];
   }
 
+  /// Credits transferred in from a previous university before enrolling at
+  /// O6U — pass/fail, don't affect GPA, but count as completed prerequisites.
+  /// A distinct record from [getTranscript]'s semesters, per the official
+  /// transcript's own "Transfer" section.
+  Future<List<TranscriptCourse>> getTransferredCredits() async {
+    final json = await JsonAssetLoader.loadObject(_assetPath);
+    final credits = json['transferredCredits'] as List<dynamic>? ?? const [];
+    return [for (final c in credits) _parseCourse(c as Map<String, dynamic>)];
+  }
+
   Semester _parseSemester(Map<String, dynamic> json) {
     final courses = json['courses'] as List<dynamic>;
     return Semester(
@@ -43,6 +53,10 @@ final transcriptRepositoryProvider = Provider<TranscriptRepository>((ref) => con
 
 final transcriptProvider = FutureProvider<List<Semester>>((ref) {
   return ref.watch(transcriptRepositoryProvider).getTranscript();
+});
+
+final transferredCreditsProvider = FutureProvider<List<TranscriptCourse>>((ref) {
+  return ref.watch(transcriptRepositoryProvider).getTransferredCredits();
 });
 
 /// Chronological semester-GPA trend, for the Academics hub's sparkline —

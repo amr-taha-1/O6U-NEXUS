@@ -8,17 +8,19 @@ const Color kFailDeepRed = Color(0xFF7F1D1D);
 
 /// Maps a transcript grade to its display color, per the grading-scale
 /// legend: A/A- green, B+/B/B- blue, C+/C/C- orange (amber), D/D+ red,
-/// F/WF deep red, W grey, PASS green, NOD neutral. The app is dark-first
-/// with a real light-theme too, so this reads [AppColors] live rather than
-/// baking in a fixed hex — "NOD = black" from a print-transcript's white
-/// background becomes "NOD = plain ink" here: neutral, unlike W's dimmed
-/// grey, but still legible on a dark surface.
+/// F/WF deep red, W grey, PASS/P green (transferred credits use "P"), NOD
+/// neutral. The app is dark-first with a real light-theme too, so this
+/// reads [AppColors] live rather than baking in a fixed hex — "NOD = black"
+/// from a print-transcript's white background becomes "NOD = plain ink"
+/// here: neutral, unlike W's dimmed grey, but still legible on a dark
+/// surface.
 Color gradeColor(AppColors colors, String grade) {
   final normalized = grade.trim().toUpperCase();
   switch (normalized) {
     case 'A':
     case 'A-':
     case 'PASS':
+    case 'P':
       return colors.success;
     case 'B+':
     case 'B':
@@ -43,9 +45,9 @@ Color gradeColor(AppColors colors, String grade) {
   }
 }
 
-/// Whether [grade] counts toward GPA at all (W/WF/PASS/NOD don't carry
+/// Whether [grade] counts toward GPA at all (W/WF/PASS/P/NOD don't carry
 /// quality points the way lettered grades do).
 bool gradeCountsTowardGpa(String grade) {
-  const excluded = {'W', 'WF', 'PASS', 'NOD'};
+  const excluded = {'W', 'WF', 'PASS', 'P', 'NOD'};
   return !excluded.contains(grade.trim().toUpperCase());
 }

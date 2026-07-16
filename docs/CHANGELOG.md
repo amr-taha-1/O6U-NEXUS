@@ -5,6 +5,40 @@ All notable changes to O6U Nexus are recorded here. Format loosely follows
 
 ## [Unreleased]
 
+### Fixed — Transcript accuracy and completeness
+- Academics hub's "This semester" section was hardcoded to fictional current-semester courses; it
+  now reads the transcript's actual latest entry (`enrichedTranscriptProvider`'s last semester) and
+  labels the section with that semester's real name — never a fixed semester, always whichever one
+  is chronologically last.
+- Added a **Transferred Credits** section above the semester list (`assets/data/transcript.json`'s
+  new `transferredCredits` key): Mathematics I and Mathematics II, both grade `P`, pass/fail and
+  excluded from GPA. They now also count as completed prerequisites in the curriculum engine
+  (`completedCourseCodesProvider`).
+- New `enrichedTranscriptProvider` (`features/transcript/application/transcript_enrichment.dart`)
+  backfills per-course credit hours and earned points wherever the raw transcript doesn't carry
+  them, using only real, cross-checkable sources: credit hours looked up by course code in the
+  official bylaw catalog, earned points computed as `hours × gradeScale.pointsForLetter(grade)`
+  from the real official grading scale. A handful of general-education elective courses aren't in
+  the major-specific bylaw catalog at all (Modern Egyptian History, Sociology of Work, Introduction
+  to Environmental Biology) — those stay `—`, since there's no official source for their credit
+  hours here, rather than being invented.
+- Grade legend: added `P` (Pass) as a synonym for `PASS` — green, excluded from GPA — since the
+  official transcript's transfer-credit rows use `P` specifically.
+
+### Added — Schedule: instructor names and the third registered course
+- Instructor names, transliterated from the official Arabic timetable, now appear on every
+  schedule card (Geographic Information System, Knowledge Management, and the newly-added Database
+  Management Systems 2).
+- Database Management Systems 2 (`ISM413`) — previously missing entirely — is now in
+  `assets/data/schedule.json`: Wednesday, lecture Room 6210 (Dr. Ayman Hassanein) and lab Room 6020
+  (Eng. Ahmed Khaled). Brings total registered summer hours to 9 (3 courses × 3 hours), confirming
+  the schedule was never hardcoded to two courses — it reads however many real sessions exist.
+
+### Fixed — Graduation Project prerequisite: 100 credit hours, not 103
+- The bylaw's Article 40 threshold was mistranscribed. Corrected in the single JSON source
+  (`minCreditHoursForGraduationProject`); every consumer (eligibility engine, Course Catalog
+  screen) already reads this value dynamically, so nothing else needed updating.
+
 ### Removed — Home quick actions and recent-semester card
 - Removed the Transcript/Analytics/Degree Progress quick-action row and the "Most recent semester"
   card from Home's dashboard summary.

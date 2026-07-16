@@ -108,6 +108,10 @@ class _NextClassCard extends StatelessWidget {
                   '${session.day.label} · ${session.timeRangeLabel} · Room ${session.room}',
                   style: text.subhead.copyWith(fontSize: 13),
                 ),
+                if (session.instructor != null) ...[
+                  const SizedBox(height: 1),
+                  Text(session.instructor!, style: text.footnote.copyWith(color: colors.textDim, fontSize: 12.5)),
+                ],
                 if (minutesUntil != null) ...[
                   const SizedBox(height: 6),
                   Text(_untilLabel(minutesUntil!), style: text.footnote.copyWith(color: colors.textDim)),
@@ -185,6 +189,10 @@ class _SessionCard extends StatelessWidget {
                   '${session.courseCode} · ${session.timeRangeLabel} · Room ${session.room}',
                   style: text.footnote,
                 ),
+                if (session.instructor != null) ...[
+                  const SizedBox(height: 1),
+                  Text(session.instructor!, style: text.footnote.copyWith(color: colors.textDim)),
+                ],
               ],
             ),
           ),

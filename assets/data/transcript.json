@@ -1,4 +1,8 @@
 {
+  "transferredCredits": [
+    { "code": "BSM116", "name": "Mathematics I", "grade": "P", "hours": 2, "points": 0.0 },
+    { "code": "BSM126", "name": "Mathematics II", "grade": "P", "hours": 2, "points": 0.0 }
+  ],
   "semesters": [
     {
       "label": "Fall 2023/2024",
