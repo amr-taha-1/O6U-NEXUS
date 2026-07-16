@@ -1,6 +1,6 @@
 {
   "source": "Bylaw-2 Prerequisites.pdf — Information Systems track, 2023/2024, Faculty of Info Sys & Comp Science, October 6 University",
-  "minCreditHoursForGraduationProject": 103,
+  "minCreditHoursForGraduationProject": 100,
   "courses": [
     { "code": "URM111", "name": "Human Rights", "creditHours": 1, "yearLevel": 1, "category": "general_education", "prerequisites": [] },
     { "code": "URM112", "name": "Introduction to Computers", "creditHours": 3, "yearLevel": 1, "category": "general_education", "prerequisites": [] },

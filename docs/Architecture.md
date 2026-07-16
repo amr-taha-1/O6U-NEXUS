@@ -110,7 +110,7 @@ engine (`features/curriculum/`): `completedCourseCodesProvider` derives "has thi
 passed" live from the real transcript (any grade except F/WF/W), and `courseEligibilityProvider`
 cross-references that against each course's real prerequisite chain to compute completed / eligible
 / locked — no hardcoded eligibility rules. `FRM416` (Graduation Project 1) is a special case: its
-prerequisite is Article 40 of the bylaw (a 103-completed-credit-hour threshold), not another course.
+prerequisite is Article 40 of the bylaw (a 100-completed-credit-hour threshold), not another course.
 `estimatedRemainingSemestersProvider` is explicitly labelled an estimate (remaining hours ÷ the
 student's own historical average hours/semester) — never presented as a promise.
 
