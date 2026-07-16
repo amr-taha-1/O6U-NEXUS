@@ -109,20 +109,30 @@ void main() {
     expect(find.text('Lecture'), findsWidgets);
     expect(find.text('Lab'), findsWidgets);
     // Instructor names, transliterated from the official Arabic timetable.
+    // `findsWidgets` (not `findsOneWidget`): whichever session is
+    // chronologically "next" at test-run time also renders in the hero
+    // "NEXT UP" card in addition to its place in the day list, so any
+    // instructor's name can legitimately appear twice depending on the
+    // real wall-clock time the suite runs at.
     expect(find.text('Dr. Ayman Hassanein'), findsWidgets); // GIS lecture + DBMS2 lecture
-    expect(find.text('Eng. Mohamed Kamal'), findsOneWidget);
-    expect(find.text('Dr. Mohamed Eissa'), findsOneWidget);
-    expect(find.text('Eng. Shady Badeer'), findsOneWidget);
-    expect(find.text('Eng. Ahmed Khaled'), findsOneWidget);
+    expect(find.text('Eng. Mohamed Kamal'), findsWidgets);
+    expect(find.text('Dr. Mohamed Eissa'), findsWidgets);
+    expect(find.text('Eng. Shady Badeer'), findsWidgets);
+    expect(find.text('Eng. Ahmed Khaled'), findsWidgets);
   });
 
   testWidgets('CourseCatalogScreen computes real eligibility from the transcript and bylaw', (tester) async {
     await pumpReady(tester, const CourseCatalogScreen());
     expect(find.text('Course Catalog'), findsWidgets);
-    // Independently derived from the real transcript + bylaw prerequisites —
-    // matches the student's actual registered summer courses.
+    // The student's actual registered summer courses show under "Currently
+    // registered this term" — never under "Eligible to register next"
+    // (registering for something you're already taking makes no sense).
+    expect(find.text('CURRENTLY REGISTERED THIS TERM'), findsOneWidget); // SectionHeader uppercases
     expect(find.text('Knowledge Management'), findsOneWidget);
     expect(find.text('Database Management Systems 2'), findsOneWidget);
+    // Elective 2, for this specialization, IS Geographic Information System
+    // — the bylaw's ISE326A entry, not a separate "Elective 2" placeholder.
+    expect(find.text('Geographic Information System (Elective 2)'), findsOneWidget);
     // Locked: Computer Networks (NTM313) hasn't been passed yet, so it gates
     // several later courses — appears as a missing-prerequisite chip more
     // than once.

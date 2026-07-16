@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/widgets.dart';
 import '../../../../features/schedule/application/schedule_providers.dart';
@@ -90,6 +92,7 @@ class _NextClassCard extends StatelessWidget {
         end: Alignment.bottomRight,
         colors: [AppColors.tint(style.color, 0.22), colors.surface],
       ),
+      onTap: () => context.push(AppRoutes.courseDetailsPath(session.courseCode)),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -168,6 +171,7 @@ class _SessionCard extends StatelessWidget {
 
     return AppCard(
       padding: const EdgeInsets.all(13),
+      onTap: () => context.push(AppRoutes.courseDetailsPath(session.courseCode)),
       child: Row(
         children: [
           Container(

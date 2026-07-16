@@ -2,31 +2,38 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/theme.dart';
+import '../../schedule/application/schedule_providers.dart';
+import '../../schedule/domain/schedule_session.dart';
 import '../domain/study_block.dart';
 
-/// Turns free hours into a plan the student didn't have to make. Static
-/// dummy grid — ports the reference's `StudyPlanner` `blocks` array
-/// (SPECS.planner) verbatim; the reference's own planner is static too.
-final studyBlocksProvider = Provider<List<StudyBlock>>((ref) {
-  const lec = StudyBlockType.lecture;
-  const ai = StudyBlockType.aiPlaced;
-  const exam = StudyBlockType.exam;
-  return const [
-    StudyBlock(day: 0, row: 0, label: 'CS402', type: lec),
-    StudyBlock(day: 1, row: 0, label: 'MA201', type: lec),
-    StudyBlock(day: 3, row: 0, label: 'Practice', type: ai),
-    StudyBlock(day: 5, row: 0, label: 'Weak', type: ai),
-    StudyBlock(day: 2, row: 1, label: 'CS310', type: lec),
-    StudyBlock(day: 4, row: 1, label: 'Mock', type: ai),
-    StudyBlock(day: 6, row: 1, label: 'EXAM', type: exam),
-    StudyBlock(day: 0, row: 2, label: 'Revise', type: ai),
-    StudyBlock(day: 1, row: 2, label: 'Algo', type: ai),
-    StudyBlock(day: 3, row: 2, label: 'PH101', type: lec),
-    StudyBlock(day: 5, row: 2, label: 'Cards', type: ai),
-  ];
+int _dayIndex(Weekday day) => switch (day) {
+      Weekday.monday => 0,
+      Weekday.tuesday => 1,
+      Weekday.wednesday => 2,
+      Weekday.thursday => 3,
+      Weekday.sunday => 6,
+    };
+
+/// The week grid's lecture cells, built from the real weekly timetable
+/// (`weeklyScheduleProvider`) — previously a fully static grid mixing real
+/// day slots with fictional course codes (CS402/MA201/CS310/PH101) *and*
+/// invented AI-placed study/exam blocks. There is no real study-scheduling
+/// or exam-calendar data source in this app, so those invented blocks are
+/// gone rather than kept fictional; only real lecture/lab slots remain.
+final studyBlocksProvider = FutureProvider<List<StudyBlock>>((ref) async {
+  final byDay = await ref.watch(weeklyScheduleProvider.future);
+  final blocks = <StudyBlock>[];
+  for (final entry in byDay.entries) {
+    final dayIndex = _dayIndex(entry.key);
+    for (var row = 0; row < entry.value.length && row < 3; row++) {
+      final session = entry.value[row];
+      blocks.add(StudyBlock(day: dayIndex, row: row, label: session.courseCode, type: StudyBlockType.lecture));
+    }
+  }
+  return blocks;
 });
 
-/// One of the three "why Nexus placed these" cards under the week grid.
+/// One of the cards under the week grid explaining what's real here.
 class PlannerInsight {
   const PlannerInsight({required this.title, required this.body, required this.color});
   final String title;
@@ -38,18 +45,19 @@ final plannerInsightsProvider = Provider<List<PlannerInsight>>((ref) {
   final c = AppColors.dark;
   return [
     PlannerInsight(
-      title: 'Reads your real gaps',
-      body: 'Free hours between lectures become study blocks.',
+      title: 'Reads your real schedule',
+      body: 'Every lecture/lab slot above comes from your real registered timetable — nothing invented.',
       color: c.success,
     ),
     PlannerInsight(
-      title: 'Prioritises weakness',
-      body: "MA201 gets the most hours — it's dragging your GPA.",
+      title: 'No automatic study-block placement yet',
+      body: 'Nexus doesn\'t have a real scheduling engine to fill your free hours automatically — that\'s '
+          'still on you for now, rather than a fabricated "0 conflicts" plan.',
       color: c.warning,
     ),
     PlannerInsight(
-      title: 'Re-plans automatically',
-      body: 'A moved deadline reshuffles the whole week.',
+      title: 'No exam calendar connected',
+      body: 'There\'s no official exam schedule uploaded yet, so no exam blocks are shown here.',
       color: c.info,
     ),
   ];

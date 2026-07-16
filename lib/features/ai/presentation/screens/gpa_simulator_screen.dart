@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/widgets.dart';
-import '../../../../shared/data/course_repository.dart';
 import '../../../../shared/data/grade_scale_repository.dart';
 import '../../../../shared/data/student_repository.dart';
-import '../../../../shared/domain/course.dart';
 import '../../../../shared/domain/grade_band.dart';
+import '../../../curriculum/application/curriculum_engine.dart';
+import '../../../curriculum/domain/catalog_course.dart';
 import '../../application/gpa_simulator_controller.dart';
 
 /// Lets a student feel the consequence of a grade before the exam. Ports the
@@ -20,7 +20,7 @@ class GpaSimulatorScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final courses = ref.watch(coursesProvider);
+    final coursesAsync = ref.watch(currentlyRegisteredCoursesProvider);
     final studentAsync = ref.watch(currentStudentProvider);
     final gradeScaleAsync = ref.watch(gradeScaleProvider);
     final picks = ref.watch(gpaSimulatorControllerProvider);
@@ -29,40 +29,54 @@ class GpaSimulatorScreen extends ConsumerWidget {
       title: 'GPA Simulator',
       body: studentAsync.when(
         data: (student) => gradeScaleAsync.when(
-          data: (gradeScale) {
-            final sim = ref.watch(gpaSimulationProvider);
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
-                  child: _ProjectedHero(projected: sim.projected, delta: sim.delta, current: student.cumulativeGpa),
-                ),
-                const SectionHeader('Move a grade, watch it move'),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
-                  child: Column(
-                    children: [
-                      for (final course in courses)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: _CourseGradeCard(
-                            course: course,
-                            gradeScale: gradeScale,
-                            picked: picks[course.code] ?? course.grade,
-                            onPick: (grade) => ref.read(gpaSimulatorControllerProvider.notifier).pick(course.code, grade),
-                          ),
-                        ),
-                    ],
+          data: (gradeScale) => coursesAsync.when(
+            data: (courses) {
+              final sim = ref.watch(gpaSimulationProvider);
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+                    child: _ProjectedHero(projected: sim.projected, delta: sim.delta, current: student.cumulativeGpa),
                   ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(AppSpacing.screenMargin, 4, AppSpacing.screenMargin, 0),
-                  child: _InsightCard(),
-                ),
-              ],
-            );
-          },
+                  const SectionHeader('Move a grade, watch it move'),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+                    child: courses.isEmpty
+                        ? StatusPlaceholder.empty(
+                            icon: CupertinoIcons.slider_horizontal_3,
+                            title: 'No in-progress courses',
+                            message: 'You have nothing currently registered to simulate a grade for.',
+                          )
+                        : Column(
+                            children: [
+                              for (final course in courses)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 10),
+                                  child: _CourseGradeCard(
+                                    course: course,
+                                    gradeScale: gradeScale,
+                                    picked: picks[course.code] ?? 'B',
+                                    onPick: (grade) =>
+                                        ref.read(gpaSimulatorControllerProvider.notifier).pick(course.code, grade),
+                                  ),
+                                ),
+                            ],
+                          ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(AppSpacing.screenMargin, 4, AppSpacing.screenMargin, 0),
+                    child: _InsightCard(),
+                  ),
+                ],
+              );
+            },
+            loading: () => const Padding(
+              padding: EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+              child: SkeletonListTile(isFirst: true),
+            ),
+            error: (error, stackTrace) => StatusPlaceholder.error(message: 'Couldn\'t load your schedule: $error'),
+          ),
           loading: () => const Padding(
             padding: EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
             child: SkeletonListTile(isFirst: true),
@@ -120,7 +134,7 @@ class _ProjectedHero extends StatelessWidget {
 
 class _CourseGradeCard extends StatelessWidget {
   const _CourseGradeCard({required this.course, required this.gradeScale, required this.picked, required this.onPick});
-  final Course course;
+  final CatalogCourse course;
   final List<GradeBand> gradeScale;
   final String picked;
   final ValueChanged<String> onPick;
@@ -138,7 +152,16 @@ class _CourseGradeCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(course.code, style: text.bodyEmphasized.copyWith(fontSize: 14.5)),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(course.name, style: text.bodyEmphasized.copyWith(fontSize: 14.5)),
+                    Text(course.code, style: text.footnote),
+                  ],
+                ),
+              ),
               Text('${course.creditHours} hrs', style: text.footnote),
             ],
           ),
@@ -194,13 +217,34 @@ class _GradeButton extends StatelessWidget {
   }
 }
 
-class _InsightCard extends StatelessWidget {
+class _InsightCard extends ConsumerWidget {
   const _InsightCard();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
     final text = context.textStyles;
+    final best = ref.watch(bestGpaMoveProvider);
+
+    if (best == null) {
+      return AppCard(
+        dashed: true,
+        padding: const EdgeInsets.all(14),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(CupertinoIcons.sparkles, size: 16, color: colors.accent),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                'No moves left to simulate — every registered course is already picked at an A.',
+                style: text.footnote.copyWith(fontSize: 13.5, height: 1.45),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
     return AppCard(
       dashed: true,
@@ -215,9 +259,9 @@ class _InsightCard extends StatelessWidget {
               TextSpan(
                 style: text.footnote.copyWith(fontSize: 13.5, height: 1.45),
                 children: [
-                  const TextSpan(text: 'Pulling MA201 from C+ to B is worth '),
+                  TextSpan(text: 'Pulling ${best.courseName} from ${best.fromGrade} to A is worth '),
                   TextSpan(
-                    text: '+0.04',
+                    text: '${best.delta >= 0 ? '+' : ''}${best.delta.toStringAsFixed(2)}',
                     style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w600),
                   ),
                   const TextSpan(

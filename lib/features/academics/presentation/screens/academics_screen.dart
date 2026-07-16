@@ -176,28 +176,30 @@ class _AcademicsBody extends StatelessWidget {
                   icon: CupertinoIcons.timer,
                   iconColor: colors.due,
                   title: 'Exam Schedule',
-                  subtitle: 'Next: MA201 midterm · 3 days',
+                  subtitle: 'No official exam schedule published yet',
                   onTap: () => context.push(AppRoutes.academicsExams),
                 ),
                 NavRowCard(
                   icon: CupertinoIcons.chart_bar,
                   iconColor: colors.accent,
                   title: 'Grades',
-                  subtitle: 'Semester GPA 3.24',
+                  subtitle: latestSemester == null
+                      ? '${student.cumulativeGpa.toStringAsFixed(2)} CGPA'
+                      : '${latestSemester!.label} GPA ${latestSemester!.gpa.toStringAsFixed(2)}',
                   onTap: () => context.push(AppRoutes.academicsGrades),
                 ),
                 NavRowCard(
                   icon: CupertinoIcons.doc_checkmark,
                   iconColor: colors.success,
                   title: 'Assignments',
-                  subtitle: '1 due Sunday · CS402',
+                  subtitle: 'No official assignment data available yet',
                   onTap: () => context.push(AppRoutes.academicsAssignments),
                 ),
                 NavRowCard(
                   icon: CupertinoIcons.gauge,
                   iconColor: colors.success,
                   title: 'Attendance',
-                  subtitle: '92% · one course below the line',
+                  subtitle: 'No official attendance data available yet',
                   onTap: () => context.push(AppRoutes.academicsAttendance),
                 ),
                 NavRowCard(
@@ -248,32 +250,36 @@ class _CourseRow extends StatelessWidget {
     final text = context.textStyles;
     final color = gradeColor(colors, course.grade);
 
-    return Container(
-      constraints: const BoxConstraints(minHeight: 56),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
-      decoration: BoxDecoration(border: isFirst ? null : Border(top: BorderSide(color: colors.hairline, width: 0.5))),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(course.name, style: text.bodyEmphasized.copyWith(fontSize: 15.5)),
-                const SizedBox(height: 1),
-                Text(
-                  '${course.code}${course.creditHours != null ? ' · ${course.creditHours} credit hours' : ''}',
-                  style: text.footnote.copyWith(color: colors.textMuted),
-                ),
-              ],
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => context.push(AppRoutes.courseDetailsPath(course.code)),
+      child: Container(
+        constraints: const BoxConstraints(minHeight: 56),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+        decoration: BoxDecoration(border: isFirst ? null : Border(top: BorderSide(color: colors.hairline, width: 0.5))),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(course.name, style: text.bodyEmphasized.copyWith(fontSize: 15.5)),
+                  const SizedBox(height: 1),
+                  Text(
+                    '${course.code}${course.creditHours != null ? ' · ${course.creditHours} credit hours' : ''}',
+                    style: text.footnote.copyWith(color: colors.textMuted),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(color: AppColors.tint(color, 0.14), borderRadius: AppRadius.smRadius),
-            child: Text(course.grade, style: text.monoBody.copyWith(color: color, fontSize: 13)),
-          ),
-        ],
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(color: AppColors.tint(color, 0.14), borderRadius: AppRadius.smRadius),
+              child: Text(course.grade, style: text.monoBody.copyWith(color: color, fontSize: 13)),
+            ),
+          ],
+        ),
       ),
     );
   }

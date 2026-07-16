@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/theme.dart';
@@ -31,15 +31,21 @@ class LectureSummaryScreen extends ConsumerWidget {
           const SectionHeader('Key takeaways'),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
-            child: Column(
-              children: [
-                for (var i = 0; i < points.length; i++)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 9),
-                    child: _KeyPointCard(index: i + 1, point: points[i]),
+            child: points.isEmpty
+                ? const StatusPlaceholder.empty(
+                    icon: CupertinoIcons.doc_text,
+                    title: 'Nothing to summarize yet',
+                    message: 'Connect a lecture recording or slide deck to get real key takeaways.',
+                  )
+                : Column(
+                    children: [
+                      for (var i = 0; i < points.length; i++)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 9),
+                          child: _KeyPointCard(index: i + 1, point: points[i]),
+                        ),
+                    ],
                   ),
-              ],
-            ),
           ),
         ],
       ),

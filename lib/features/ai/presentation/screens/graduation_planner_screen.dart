@@ -6,48 +6,65 @@ import '../../../../core/widgets/widgets.dart';
 import '../../../../shared/data/student_repository.dart';
 import '../../../../shared/domain/graduation_step.dart';
 import '../../../../shared/domain/student.dart';
+import '../../../curriculum/application/curriculum_engine.dart';
 import '../../application/graduation_planner_providers.dart';
 
-/// Compresses four years into one legible path with one warning, in Nexus's
-/// own voice — "I built this from your transcript," not a static record.
-/// Ports the reference's `GradPlanner` (SPECS.gradplan): 96% on-time is a
-/// probability, always labelled as one; the bottleneck is the entire point
-/// of the screen. A separate, independently-built sibling of Academics'
-/// "Graduation Progress" screen (`features/academics/.../graduation_screen.dart`)
-/// — a little structural duplication here is expected, not a bug.
+/// Compresses the real degree record into one legible path, in Nexus's own
+/// voice — "I built this from your transcript," not an independent
+/// fabricated record. A sibling of Academics' "Graduation Progress" screen
+/// (`features/academics/.../graduation_screen.dart`) that reads the same
+/// real `DegreeProgress`/eligibility data, just narrated differently — see
+/// `graduation_planner_providers.dart`.
 class GraduationPlannerScreen extends ConsumerWidget {
   const GraduationPlannerScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final studentAsync = ref.watch(currentStudentProvider);
-    final steps = ref.watch(aiGraduationStepsProvider);
+    final stepsAsync = ref.watch(aiGraduationStepsProvider);
+    final estimatedSemestersAsync = ref.watch(estimatedRemainingSemestersProvider);
+    final lockedAsync = ref.watch(lockedCoursesProvider);
 
     return AppPushScaffold(
       title: 'Graduation Planner',
       body: studentAsync.when(
-        data: (student) => Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
-              child: _NexusHero(hoursLeft: student.creditHoursRemaining),
-            ),
-            const SectionHeader('Your path, as Nexus sees it'),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
-              child: Column(
-                children: [
-                  for (var i = 0; i < steps.length; i++)
-                    _StepRow(step: steps[i], isLast: i == steps.length - 1, filled: i < 4, lineOn: i < 3),
-                ],
+        data: (student) => stepsAsync.when(
+          data: (steps) => Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+                child: _NexusHero(
+                  hoursLeft: student.creditHoursRemaining,
+                  estimatedSemesters: estimatedSemestersAsync.valueOrNull,
+                ),
               ),
-            ),
-            const Padding(
-              padding: EdgeInsets.fromLTRB(AppSpacing.screenMargin, 6, AppSpacing.screenMargin, 0),
-              child: _BottleneckCard(),
-            ),
-          ],
+              const SectionHeader('Your path, as Nexus sees it'),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+                child: Column(
+                  children: [
+                    for (var i = 0; i < steps.length; i++)
+                      _StepRow(
+                        step: steps[i],
+                        isLast: i == steps.length - 1,
+                        filled: steps[i].status == GraduationStepStatus.done,
+                        lineOn: i > 0 && steps[i - 1].status == GraduationStepStatus.done,
+                      ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(AppSpacing.screenMargin, 6, AppSpacing.screenMargin, 0),
+                child: _BottleneckCard(locked: lockedAsync.valueOrNull ?? const []),
+              ),
+            ],
+          ),
+          loading: () => const Padding(
+            padding: EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+            child: SkeletonListTile(isFirst: true),
+          ),
+          error: (error, stackTrace) => StatusPlaceholder.error(message: 'Couldn\'t load your record: $error'),
         ),
         loading: () => const Padding(
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
@@ -60,8 +77,9 @@ class GraduationPlannerScreen extends ConsumerWidget {
 }
 
 class _NexusHero extends StatelessWidget {
-  const _NexusHero({required this.hoursLeft});
+  const _NexusHero({required this.hoursLeft, required this.estimatedSemesters});
   final int hoursLeft;
+  final int? estimatedSemesters;
 
   @override
   Widget build(BuildContext context) {
@@ -95,10 +113,15 @@ class _NexusHero extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text('96% on-time', style: text.title3),
+                    Text(
+                      estimatedSemesters == null
+                          ? '$hoursLeft hours left'
+                          : '~$estimatedSemesters ${estimatedSemesters == 1 ? 'semester' : 'semesters'} left',
+                      style: text.title3,
+                    ),
                     const SizedBox(height: 2),
                     Text(
-                      '$hoursLeft hours left at your current pace',
+                      '$hoursLeft hours left at your own historical pace — an estimate, not a promise',
                       style: text.subhead.copyWith(fontSize: 13.5),
                     ),
                   ],
@@ -180,12 +203,34 @@ class _StepRow extends StatelessWidget {
 }
 
 class _BottleneckCard extends StatelessWidget {
-  const _BottleneckCard();
+  const _BottleneckCard({required this.locked});
+  final List<CourseEligibility> locked;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
     final text = context.textStyles;
+
+    if (locked.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    // The real course blocking the most other courses right now — a
+    // genuine bottleneck, not a fabricated one.
+    final blockedCounts = <String, int>{};
+    for (final entry in locked) {
+      for (final missing in entry.missingPrerequisites) {
+        blockedCounts[missing.code] = (blockedCounts[missing.code] ?? 0) + 1;
+      }
+    }
+    if (blockedCounts.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    final bottleneckCode = blockedCounts.entries.reduce((a, b) => a.value >= b.value ? a : b).key;
+    final bottleneckCourse = locked
+        .expand((e) => e.missingPrerequisites)
+        .firstWhere((c) => c.code == bottleneckCode);
+    final blockedCount = blockedCounts[bottleneckCode]!;
 
     return Container(
       padding: const EdgeInsets.all(15),
@@ -204,11 +249,11 @@ class _BottleneckCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Nexus flagged a bottleneck · CS412', style: text.bodyEmphasized.copyWith(fontSize: 14.5)),
+                Text('Real bottleneck · ${bottleneckCourse.name} (${bottleneckCourse.code})', style: text.bodyEmphasized.copyWith(fontSize: 14.5)),
                 const SizedBox(height: 3),
                 Text(
-                  "It's Fall-only and a prerequisite for two courses you still need. I moved it to summer "
-                  'in this plan — that alone removes a full semester of delay.',
+                  'Not yet completed, and it gates $blockedCount other course${blockedCount == 1 ? '' : 's'} still '
+                  'locked on your real prerequisite chain. Clearing it first unlocks the most follow-on courses.',
                   style: text.footnote.copyWith(fontSize: 13.5),
                 ),
               ],

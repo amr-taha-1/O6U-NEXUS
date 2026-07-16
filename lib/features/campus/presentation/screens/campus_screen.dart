@@ -28,9 +28,13 @@ class CampusScreen extends ConsumerWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(AppSpacing.screenMargin, 0, AppSpacing.screenMargin, 14),
-            child: AppSearchBar(hintText: 'Search books, gigs, rooms, people'),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(AppSpacing.screenMargin, 0, AppSpacing.screenMargin, 14),
+            child: AppSearchBar(
+              hintText: 'Search books, gigs, rooms, people',
+              readOnly: true,
+              onTap: () => context.push(AppRoutes.search),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
@@ -112,6 +116,20 @@ class CampusScreen extends ConsumerWidget {
                     title: 'Freelance',
                     subtitle: 'Paid gigs posted by other students',
                     onTap: () => context.push(AppRoutes.campusFreelance),
+                  ),
+                  NavRowCard(
+                    icon: CupertinoIcons.car_detailed,
+                    iconColor: colors.due,
+                    title: 'Carpool',
+                    subtitle: 'University-verified rides to and from O6U',
+                    onTap: () => context.push(AppRoutes.campusCarpool),
+                  ),
+                  NavRowCard(
+                    icon: CupertinoIcons.globe,
+                    iconColor: colors.accent,
+                    title: 'Campus Network',
+                    subtitle: 'Community, reputation, clubs, and more',
+                    onTap: () => context.push(AppRoutes.campusNetwork),
                   ),
                 ],
               ),

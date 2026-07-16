@@ -17,6 +17,9 @@ abstract final class AppRoutes {
   static const campus = '/campus';
   static const profile = '/profile';
 
+  // Global search (full-screen, outside the tab shell)
+  static const search = '/search';
+
   // Academics sub-screens
   static const academicsSchedule = '/academics/schedule';
   static const academicsExams = '/academics/exams';
@@ -27,6 +30,8 @@ abstract final class AppRoutes {
   static const academicsGraduation = '/academics/graduation';
   static const academicsAnalytics = '/academics/analytics';
   static const academicsCatalog = '/academics/catalog';
+  static const academicsCourseDetails = '/academics/course';
+  static String courseDetailsPath(String code) => '$academicsCourseDetails/$code';
 
   // AI sub-screens
   static const aiStudyPlanner = '/ai/study-planner';
@@ -39,6 +44,25 @@ abstract final class AppRoutes {
   static const campusBookExchange = '/campus/book-exchange';
   static const campusInternships = '/campus/internships';
   static const campusFreelance = '/campus/freelance';
+  static const campusCarpool = '/campus/carpool';
+  static String carpoolRidePath(String id) => '$campusCarpool/ride/$id';
+
+  // Campus Network
+  static const campusNetwork = '/campus/network';
+  static const campusNetworkFeed = '/campus/network/feed';
+  static String campusNetworkPostPath(String id) => '$campusNetworkFeed/$id';
+  static const campusNetworkCreatePost = '/campus/network/feed/create';
+  static const campusNetworkProfile = '/campus/network/profile';
+  static String campusNetworkMemberPath(String id) => '/campus/network/member/$id';
+  static const campusNetworkStudyGroups = '/campus/network/study-groups';
+  static String campusNetworkStudyGroupPath(String id) => '$campusNetworkStudyGroups/$id';
+  static const campusNetworkClubs = '/campus/network/clubs';
+  static String campusNetworkClubPath(String id) => '$campusNetworkClubs/$id';
+  static const campusNetworkChallenges = '/campus/network/challenges';
+  static const campusNetworkLeaderboards = '/campus/network/leaderboards';
+  static const campusNetworkVideos = '/campus/network/videos';
+  static const campusNetworkDna = '/campus/network/dna';
+  static const campusNetworkMarketplace = '/campus/network/marketplace';
 
   // Profile sub-screens
   static const profileStudentId = '/profile/student-id';

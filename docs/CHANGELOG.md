@@ -5,6 +5,115 @@ All notable changes to O6U Nexus are recorded here. Format loosely follows
 
 ## [Unreleased]
 
+### Fixed — Full data-integrity audit against the official source documents
+- **Elective 2 ↔ Geographic Information System.** The bylaw listed Elective 2 as a generic
+  placeholder (`ISE326`, "Elective 2"); the real timetable uses `ISE326A`, "Geographic Information
+  System." Different codes meant the curriculum engine treated them as two different courses —
+  fixed by correcting the bylaw entry to `ISE326A`, "Geographic Information System (Elective 2)",
+  so every prerequisite tree, catalog entry, search result, and course-details page now treats them
+  as the one real course they are.
+- **Student level was wrong.** `student.json` said Level 2 while the real transcript shows
+  completed/in-progress courses through bylaw Year 4 (ISM413, ISM424, ISE326A — all `yearLevel: 4`)
+  — internally inconsistent with 91 of 144 real completed hours. Corrected to Level 4.
+- **Currently-registered courses appeared under "Eligible to register next."** The eligibility
+  engine only knew `completed` vs `eligible` vs `locked`; a course the student is already sitting in
+  this term (not yet graded, so not "completed") fell through to `eligible`, wrongly telling the
+  student to register for something they're already taking. Added a real `registered` status
+  (`currentlyRegisteredCourseCodesProvider`, sourced from the real timetable) and a "Currently
+  Registered This Term" section in Course Catalog, ahead of "Eligible to register next" — see
+  `curriculum_engine.dart`.
+- **Hardcoded fake data throughout Academics, Home, Profile, and every AI screen**, all
+  contradicting or unrelated to the real record — course codes (CS402/MA201/CS310/PH101/EN102/CS412)
+  that don't exist anywhere in the real bylaw or transcript, a hardcoded "Semester GPA 3.24" that
+  never matched the real semester GPAs, a hardcoded "92%" attendance figure, a notification claiming
+  "cumulative GPA moved to 3.12" against a real CGPA of 2.67, an AI Resume Builder verdict claiming
+  the student's major is "Computer Science" against the real "Information Systems," a Graduation
+  Planner independently inventing "Level 1–4 done / Aug 2027 / 96%" instead of reading the real
+  `DegreeProgress`, and a fabricated "CS412 bottleneck" course. Every one of these is now either
+  computed from real data (Grades subtitle, Home's NextUpCard/DayTimeline, GPA Simulator's course
+  picker, the AI chat's 4 canned replies, Graduation Planner, Resume Builder, notifications, Profile
+  check-in/achievements) or, where no real data source exists at all (attendance %, exam schedule,
+  assignment due dates, lecture-recording summaries), replaced with an honest "no official data yet"
+  state instead of a fabricated number — never both a fake claim and a real one in the same app. See
+  the closing audit report for the full file-by-file list.
+
+### Added — Campus Network (Community, Reputation, Portfolio, Study Groups, Clubs, Economy, Challenges, Leaderboards, Shorts, DNA, Intelligence Feed, Campus OS)
+- A new `features/campus_network/` module, reachable from the Campus tab's "More on campus" list —
+  the app's biggest single feature addition, covering all 14 requested subsystems at once:
+  - **Campus Community**: posts (text/image/document/question/poll/note/project update/achievement),
+    like/comment/bookmark/share, hashtags, replies. `CampusFeedController` layers live like/bookmark
+    state on top of seed posts.
+  - **Campus Reputation**: Academic/Community/Leadership/Innovation reputation, Campus Level, XP,
+    badges, and Global/Department/Faculty/Community rank — all computed live
+    (`campus_reputation.dart`), never a stored score, the same discipline as Carpool's Trust Score.
+  - **Student Profile 2.0 / "LinkedIn for Students"**: skills, languages, certificates, portfolio
+    projects, GitHub/LinkedIn/portfolio links, volunteer hours, followers — `MemberProfileScreen`
+    doubles as the signed-in student's own (real-data) profile and any seed member's.
+  - **Study Groups**, **Clubs** (IEEE/GDG/ICPC/Rotaract/Student Union, each with posts/events/
+    announcements), **Campus Coins** economy + ledger, **Challenges** (daily/weekly/semester
+    missions with real XP/Coin rewards), **Leaderboards** (9 categories, each a live sort — see
+    `leaderboard_providers.dart` for exactly what each ranks by), **Campus Shorts** (short-video
+    feed metadata; no real playback — see below), **Campus DNA** (real strongest/weakest bylaw
+    category + real GPA trend from the transcript; "best study time"/"learning style"/"productivity
+    trends" are deliberately not modeled — no activity-tracking data source exists to compute them
+    from honestly), **Campus Intelligence** smart feed (aggregates next class, an eligible course to
+    register, the nearest carpool, degree-progress hours remaining, a trending post, and the next
+    club event — all from real providers already in the app), and a **Campus OS** home screen
+    (`CampusNetworkHomeScreen`) tying it together with a real greeting, real today's classes, and
+    real next-lecture countdown.
+- Every member besides the signed-in student, and every post/study-group/club-event/video, is seed
+  content (`campus_member_repository.dart` and friends) — there is no real O6U social-network backend
+  or real classmate data source for a brand-new social feature, the same convention Carpool already
+  established. The signed-in student's own card is always built from the real `Student` record.
+- Skipped, by design, for reasons documented in each file: real image/video upload or playback (no
+  `image_picker`/`video_player` — this sandbox cannot resolve new native Gradle dependencies), real
+  Campus Coins redemption by university partners (no partner-integration backend), weather on the
+  Campus OS screen (no weather API key), and persisted streak/XP history across app restarts (no
+  `shared_preferences` wiring for this yet — everything is session-scoped, same as Carpool's
+  favorites).
+
+### Added — Global Smart Search, Course Details, and University Verified Carpool
+- **Global Smart Search** (`features/search/`): one instant, categorized, ranked search over Student
+  Profile, Transcript, Current Courses, Schedule, Degree Progress, GPA & Analytics, Course Catalog/
+  Bylaw/Prerequisites, and Notifications — searchable by course code or name, partial text, with
+  recent searches, suggestions, and highlighted matches. Reachable from a new search icon on Home's
+  app bar and from Campus's search bar. Every result routes to a real, already-wired screen.
+- **Course Details** (`features/course_details/`): every course reference anywhere in the app
+  (Transcript, Academics hub, Course Catalog, Schedule) is now tappable, landing on one aggregator
+  page (`courseDetailsProvider`) merging the real bylaw entry (prerequisites, next courses, credit
+  hours), every real transcript attempt chronologically (including transferred credits), and live
+  eligibility. "Estimated workload" is a transparent, documented proxy from credit hours and
+  prerequisite depth — labelled as an estimate, never presented as a real difficulty statistic (no
+  cohort data exists to compute one).
+- **University Verified Carpool** (`features/campus/…carpool*`): O6U-exclusive rides, masked student
+  ID (`Student ID ending with: ****1234`), a computed Trust Score (0–100 + badges: 🟢 Trusted Driver,
+  ⭐ Top Rated, 🚘 Frequent Driver, 🎓 Verified Student, 🏆 Campus Ambassador), safety preferences
+  (rider gender preference; driver-configurable seats/pickup instructions/arrival tolerance/music/
+  smoking/AC), a documented smart-matching percentage combining trust, rating, departure-time
+  proximity, seed distance, and favorite-driver status, and Campus Only routing (one end of every
+  trip is always October 6 University — `Ride.originLabel`/`destinationLabel`). Ride/driver content
+  is seed data, the same convention as the existing Book Exchange/Internships/Freelance listings;
+  the signed-in student's own card uses the real `Student` record.
+
+### Fixed — a `flutter_test`/`FakeAsync` deadlock, not a Carpool bug
+- `CarpoolScreen`'s widget test hung indefinitely (10-minute timeout) even though the exact same
+  widget rendered instantly in an isolated diagnostic pump. Root cause: the test body did
+  `await container.read(xProvider.future)` a *second* time inside a `testWidgets` callback, after
+  that same Future had already been completed once for real inside `setUpAll` (which runs outside
+  `flutter_test`'s `FakeAsync` zone). Re-awaiting a Future that completed in real time from inside
+  fake time deadlocks the pump machinery instead of resolving immediately. Fix: read every needed
+  value once in `setUpAll` and store it in a plain variable; never re-await an already-resolved
+  container future inside a `testWidgets` body. Documented in `docs/Architecture.md` "Testing"
+  alongside the existing single-real-asset-load gotcha.
+
+### Fixed — `intl.DateFormat` never exercised under `flutter_test`
+- While debugging the above, `Ride.departureTimeLabel`/`departureDayLabel` and their Study
+  Group/Club Event equivalents were switched from `intl.DateFormat` to hand-rolled formatters
+  (mirroring `ScheduleSession.timeRangeLabel`, which already avoided `intl` for the same reason).
+  Not the actual root cause of the hang above, but a real latent risk this build's own `HomeScreen`
+  already carried unnoticed (no test had ever rendered a screen using `DateFormat` before); removing
+  it from the new Carpool/Campus Network screens closes that risk for all newly-added code.
+
 ### Fixed — Transcript accuracy and completeness
 - Academics hub's "This semester" section was hardcoded to fictional current-semester courses; it
   now reads the transcript's actual latest entry (`enrichedTranscriptProvider`'s last semester) and

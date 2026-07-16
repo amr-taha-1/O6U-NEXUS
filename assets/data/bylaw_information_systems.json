@@ -39,7 +39,7 @@
     { "code": "CSM323", "name": "Distributed Computer Systems", "creditHours": 3, "yearLevel": 3, "category": "mutual", "prerequisites": ["NTM313", "CSM311"] },
     { "code": "ISM324", "name": "Information Retrieval", "creditHours": 3, "yearLevel": 3, "category": "major_mandatory", "prerequisites": ["ISM226", "CSM216"] },
     { "code": "ISM325", "name": "Modeling & Simulation", "creditHours": 4, "yearLevel": 3, "category": "major_mandatory", "prerequisites": ["ISM312", "ISM314"] },
-    { "code": "ISE326", "name": "Elective 2", "creditHours": 3, "yearLevel": 3, "category": "elective", "prerequisites": ["ISM315"] },
+    { "code": "ISE326A", "name": "Geographic Information System (Elective 2)", "creditHours": 3, "yearLevel": 3, "category": "elective", "prerequisites": ["ISM315"] },
     { "code": "ISM411", "name": "Web Application Development", "creditHours": 3, "yearLevel": 4, "category": "mutual", "prerequisites": ["ISM226", "NTM313"] },
     { "code": "ISM412", "name": "Business Intelligence", "creditHours": 3, "yearLevel": 4, "category": "major_mandatory", "prerequisites": ["ISM315"] },
     { "code": "ISM413", "name": "Database Management Systems 2", "creditHours": 3, "yearLevel": 4, "category": "mutual", "prerequisites": ["ISM226"] },

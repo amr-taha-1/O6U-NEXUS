@@ -16,16 +16,18 @@ class _GlanceStat {
   final String sub;
 }
 
-final _fictionalStats = [
-  _GlanceStat('Attendance', '92%', (c) => c.success, 'across 5 courses'),
-  _GlanceStat('Next exam', '3 days', (c) => c.warning, 'MA201 · midterm'),
-  _GlanceStat('Deadlines', '2 open', (c) => c.due, 'both due Sunday'),
+final _unavailableStats = [
+  _GlanceStat('Attendance', '—', (c) => c.textDim, 'No official data yet'),
+  _GlanceStat('Next exam', '—', (c) => c.textDim, 'No exam schedule published'),
+  _GlanceStat('Deadlines', '—', (c) => c.textDim, 'No official data yet'),
 ];
 
 /// Four numbers a student actually re-checks. Anything else belongs in
 /// Academics. "Credits left" is real (from the student's actual record);
-/// the other three have no real-data equivalent yet, so they stay on the
-/// existing fictional current-semester dataset.
+/// the other three have no official data source (no attendance system, no
+/// published exam schedule, no assignment tracker), so they show an honest
+/// "—" rather than a fabricated number — see docs/Architecture.md
+/// "Real data".
 class GlanceGrid extends ConsumerWidget {
   const GlanceGrid({super.key});
 
@@ -40,7 +42,7 @@ class GlanceGrid extends ConsumerWidget {
       (c) => c.info,
       'toward graduation',
     );
-    final stats = [..._fictionalStats, creditsLeft];
+    final stats = [..._unavailableStats, creditsLeft];
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),

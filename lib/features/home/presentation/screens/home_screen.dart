@@ -1,7 +1,9 @@
 ﻿import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/widgets.dart';
 import '../../../../features/degree_progress/data/degree_progress_repository.dart';
@@ -24,7 +26,7 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
     final text = context.textStyles;
-    final schedule = ref.watch(todayScheduleProvider);
+    final schedule = ref.watch(todayScheduleProvider).valueOrNull ?? const [];
     final unread = ref.watch(unreadCountProvider);
     final dateLabel = DateFormat('EEEE, d MMMM').format(DateTime.now());
 
@@ -40,24 +42,37 @@ class HomeScreen extends ConsumerWidget {
 
     return LargeTitleScaffold(
       title: 'Home',
-      trailing: GestureDetector(
-        onTap: () => showNotificationsSheet(context),
-        child: SizedBox(
-          width: 44,
-          height: 44,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Icon(CupertinoIcons.bell, size: 20, color: colors.textPrimary),
-              if (unread > 0)
-                Positioned(
-                  top: 5,
-                  right: 6,
-                  child: GlowBadge(color: colors.due, ringColor: colors.ink),
-                ),
-            ],
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            onTap: () => context.push(AppRoutes.search),
+            child: SizedBox(
+              width: 40,
+              height: 44,
+              child: Icon(CupertinoIcons.search, size: 20, color: colors.textPrimary),
+            ),
           ),
-        ),
+          GestureDetector(
+            onTap: () => showNotificationsSheet(context),
+            child: SizedBox(
+              width: 44,
+              height: 44,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Icon(CupertinoIcons.bell, size: 20, color: colors.textPrimary),
+                  if (unread > 0)
+                    Positioned(
+                      top: 5,
+                      right: 6,
+                      child: GlowBadge(color: colors.due, ringColor: colors.ink),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

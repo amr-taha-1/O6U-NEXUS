@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/widgets.dart';
 import '../../../../features/transcript/application/transcript_enrichment.dart';
@@ -232,7 +234,10 @@ class _CourseTile extends StatelessWidget {
     final text = context.textStyles;
     final color = gradeColor(colors, course.grade);
 
-    return Container(
+    return GestureDetector(
+      onTap: () => context.push(AppRoutes.courseDetailsPath(course.code)),
+      behavior: HitTestBehavior.opaque,
+      child: Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
       decoration: BoxDecoration(border: isFirst ? null : Border(top: BorderSide(color: colors.hairline, width: 0.5))),
       child: Row(
@@ -273,6 +278,7 @@ class _CourseTile extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

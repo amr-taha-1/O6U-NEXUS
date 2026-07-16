@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../features/schedule/data/schedule_repository.dart';
 import '../../../features/transcript/data/transcript_repository.dart';
 import '../../../shared/data/student_repository.dart';
 import '../../../shared/domain/student.dart';
@@ -31,7 +32,18 @@ final completedCourseCodesProvider = FutureProvider<Set<String>>((ref) async {
   return completed;
 });
 
-enum EligibilityStatus { completed, eligible, locked }
+/// The set of course codes the student is registered for *this* term,
+/// derived live from the real timetable (`assets/data/schedule.json`) — not
+/// yet graded, so not in [completedCourseCodesProvider], but already being
+/// taken. A course in this set must never also show up as "eligible to
+/// register next": that would tell the student to register for something
+/// they're already sitting in.
+final currentlyRegisteredCourseCodesProvider = FutureProvider<Set<String>>((ref) async {
+  final sessions = await ref.watch(scheduleProvider.future);
+  return {for (final session in sessions) session.courseCode};
+});
+
+enum EligibilityStatus { completed, registered, eligible, locked }
 
 class CourseEligibility {
   const CourseEligibility({required this.course, required this.status, this.missingPrerequisites = const []});
@@ -41,14 +53,16 @@ class CourseEligibility {
   final List<CatalogCourse> missingPrerequisites;
 }
 
-/// Every bylaw course, resolved against the real transcript: completed,
-/// eligible to register next, or locked (with exactly which prerequisites
-/// are still missing). `FRM416` (Graduation Project 1) is a special case —
-/// its prerequisite is Article 40 of the bylaw (a credit-hour threshold),
-/// not another course.
+/// Every bylaw course, resolved against the real transcript and the real
+/// current-term timetable: completed, currently registered (this term, not
+/// yet graded), eligible to register next, or locked (with exactly which
+/// prerequisites are still missing). `FRM416` (Graduation Project 1) is a
+/// special case — its prerequisite is Article 40 of the bylaw (a
+/// credit-hour threshold), not another course.
 final courseEligibilityProvider = FutureProvider<List<CourseEligibility>>((ref) async {
   final catalog = await ref.watch(curriculumProvider.future);
   final completed = await ref.watch(completedCourseCodesProvider.future);
+  final registered = await ref.watch(currentlyRegisteredCourseCodesProvider.future);
   final student = await ref.watch(currentStudentProvider.future);
   final minHoursForProject = await ref.watch(minCreditHoursForGraduationProjectProvider.future);
 
@@ -58,6 +72,8 @@ final courseEligibilityProvider = FutureProvider<List<CourseEligibility>>((ref) 
     for (final course in catalog)
       if (completed.contains(course.code))
         CourseEligibility(course: course, status: EligibilityStatus.completed)
+      else if (registered.contains(course.code))
+        CourseEligibility(course: course, status: EligibilityStatus.registered)
       else if (course.requiresArticle40)
         if (student.creditHoursCompleted >= minHoursForProject)
           CourseEligibility(course: course, status: EligibilityStatus.eligible)
@@ -75,6 +91,11 @@ final courseEligibilityProvider = FutureProvider<List<CourseEligibility>>((ref) 
         }(),
       ],
   ];
+});
+
+final currentlyRegisteredCoursesProvider = FutureProvider<List<CatalogCourse>>((ref) async {
+  final all = await ref.watch(courseEligibilityProvider.future);
+  return [for (final e in all) if (e.status == EligibilityStatus.registered) e.course];
 });
 
 final eligibleNextCoursesProvider = FutureProvider<List<CatalogCourse>>((ref) async {

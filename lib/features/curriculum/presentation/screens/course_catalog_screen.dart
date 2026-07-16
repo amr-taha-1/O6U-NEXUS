@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/widgets.dart';
 import '../../application/curriculum_engine.dart';
@@ -46,6 +48,7 @@ class _CatalogBody extends StatelessWidget {
     final colors = context.colors;
     final text = context.textStyles;
 
+    final registered = [for (final e in eligibility) if (e.status == EligibilityStatus.registered) e];
     final eligibleNow = [for (final e in eligibility) if (e.status == EligibilityStatus.eligible) e];
     final locked = [for (final e in eligibility) if (e.status == EligibilityStatus.locked) e];
     final completedCount = eligibility.where((e) => e.status == EligibilityStatus.completed).length;
@@ -59,6 +62,7 @@ class _CatalogBody extends StatelessWidget {
             child: Row(
               children: [
                 _StatColumn(label: 'Completed', value: '$completedCount', color: colors.success),
+                _StatColumn(label: 'Registered', value: '${registered.length}', color: colors.info),
                 _StatColumn(label: 'Eligible now', value: '${eligibleNow.length}', color: colors.accent),
                 _StatColumn(label: 'Locked', value: '${locked.length}', color: colors.warning),
               ],
@@ -74,6 +78,21 @@ class _CatalogBody extends StatelessWidget {
               style: text.footnote.copyWith(color: colors.textDim),
             ),
           ),
+        if (registered.isNotEmpty) ...[
+          const SectionHeader('Currently registered this term'),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+            child: AppCard(
+              padding: EdgeInsets.zero,
+              child: Column(
+                children: [
+                  for (var i = 0; i < registered.length; i++)
+                    _RegisteredRow(course: registered[i].course, isFirst: i == 0),
+                ],
+              ),
+            ),
+          ),
+        ],
         const SectionHeader('Eligible to register next'),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
@@ -137,25 +156,66 @@ class _EligibleRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final text = context.textStyles;
-    return Container(
-      constraints: const BoxConstraints(minHeight: 56),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
-      decoration: BoxDecoration(border: isFirst ? null : Border(top: BorderSide(color: colors.hairline, width: 0.5))),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(course.name, style: text.bodyEmphasized.copyWith(fontSize: 15)),
-                const SizedBox(height: 1),
-                Text('${course.code} · ${course.creditHours} credit hours', style: text.footnote),
-              ],
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => context.push(AppRoutes.courseDetailsPath(course.code)),
+      child: Container(
+        constraints: const BoxConstraints(minHeight: 56),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+        decoration: BoxDecoration(border: isFirst ? null : Border(top: BorderSide(color: colors.hairline, width: 0.5))),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(course.name, style: text.bodyEmphasized.copyWith(fontSize: 15)),
+                  const SizedBox(height: 1),
+                  Text('${course.code} · ${course.creditHours} credit hours', style: text.footnote),
+                ],
+              ),
             ),
-          ),
-          Icon(CupertinoIcons.checkmark_circle, size: 18, color: colors.success),
-        ],
+            Icon(CupertinoIcons.checkmark_circle, size: 18, color: colors.success),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _RegisteredRow extends StatelessWidget {
+  const _RegisteredRow({required this.course, required this.isFirst});
+  final CatalogCourse course;
+  final bool isFirst;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final text = context.textStyles;
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => context.push(AppRoutes.courseDetailsPath(course.code)),
+      child: Container(
+        constraints: const BoxConstraints(minHeight: 56),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+        decoration: BoxDecoration(border: isFirst ? null : Border(top: BorderSide(color: colors.hairline, width: 0.5))),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(course.name, style: text.bodyEmphasized.copyWith(fontSize: 15)),
+                  const SizedBox(height: 1),
+                  Text('${course.code} · ${course.creditHours} credit hours', style: text.footnote),
+                ],
+              ),
+            ),
+            Icon(CupertinoIcons.time, size: 18, color: colors.info),
+          ],
+        ),
       ),
     );
   }
@@ -175,6 +235,7 @@ class _LockedCard extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 10),
       child: AppCard(
         padding: const EdgeInsets.all(13),
+        onTap: () => context.push(AppRoutes.courseDetailsPath(course.code)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,

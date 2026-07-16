@@ -141,13 +141,27 @@ hang forever waiting for a frame that never stops being scheduled.
 **Real-data `FutureProvider`s + widget tests**: screens reading through `assets/data/*.json` (see
 "Real data" below) resolve via a genuine `rootBundle.loadString` platform-channel round trip, not a
 fake-clock `Timer` — so pumping frames to "wait it out" is unreliable (the number of pumps needed
-isn't fixed, and racing it against other tests in the same file is flaky). Worse, `flutter_test`'s
-asset-bundle channel only tolerates **one** real disk-backed asset load per test *isolate* — a
-second independent `rootBundle.loadString` call anywhere else in the same test file hangs forever,
-regardless of which screen triggers it. The fix used throughout `test/features/*/presentation/`:
-create a single `ProviderContainer`, `await container.read(xProvider.future)` for every real-data
-provider the file's screens touch (once, in `setUpAll` if the file has more than one such test),
-then hand that same container to each widget via `UncontrolledProviderScope` instead of a fresh
-`ProviderScope`. The data is available synchronously on the first build, and only one real read
-ever happens per file. See `test/features/academics/presentation/academics_real_data_screens_test.dart`
-and `test/features/ai/presentation/ai_sub_screens_test.dart` for worked examples.
+isn't fixed, and racing it against other tests in the same file is flaky). The fix used throughout
+`test/features/*/presentation/`: create a single `ProviderContainer`, `await
+container.read(xProvider.future)` for every real-data provider the file's screens touch (once, in
+`setUpAll` if the file has more than one such test), then hand that same container to each widget
+via `UncontrolledProviderScope` instead of a fresh `ProviderScope`. The data is available
+synchronously on the first build. This pattern tolerates *many* real disk-backed asset loads in one
+`setUpAll` just fine (`campus_network_screens_test.dart` pre-warms over a dozen) — the earlier
+version of this note claimed only one was safe per isolate; that was a misdiagnosis. See "The real
+gotcha" below for what actually causes the hang this note used to blame on asset loading. See
+`test/features/academics/presentation/academics_real_data_screens_test.dart` and
+`test/features/ai/presentation/ai_sub_screens_test.dart` for worked examples.
+
+**The real gotcha: never re-await an already-resolved container Future inside a `testWidgets`
+body.** `setUpAll` runs in real time, outside the `FakeAsync` zone `testWidgets` wraps its body in.
+If a Future was *completed* during `setUpAll` (e.g. `await container.read(xProvider.future)`) and a
+test later does `await container.read(xProvider.future)` again inside its own `testWidgets`
+callback — even though the Future is already resolved and this "should" return instantly — it
+deadlocks `flutter_test`'s pump machinery instead, hanging for the full default 10-minute test
+timeout. It doesn't throw or error; it just hangs, and every test *after* the hung one in the same
+run reports a bogus `Guarded function conflict` as collateral damage, which can look like unrelated
+tests are broken too. This cost real debugging time on `CarpoolScreen`'s test (see
+`docs/CHANGELOG.md`) — the fix is to read every value the test needs once in `setUpAll`, store it
+in a plain `late` variable, and reference that variable inside `testWidgets` bodies instead of
+calling `container.read(...future)` a second time.

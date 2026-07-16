@@ -14,11 +14,11 @@ class _Badge {
 }
 
 final _badges = [
-  _Badge(CupertinoIcons.rosette, (c) => c.accent, "Dean's List", 'Level 3', true),
-  _Badge(CupertinoIcons.checkmark_seal_fill, (c) => c.success, 'Perfect Attendance', 'CS310', true),
+  _Badge(CupertinoIcons.rosette, (c) => c.accent, "Dean's List", 'Achieved', true),
+  _Badge(CupertinoIcons.checkmark_seal_fill, (c) => c.success, 'Perfect Attendance', 'ISM413', true),
   _Badge(CupertinoIcons.alarm, (c) => c.info, 'Early Bird', 'Never late this term', true),
   _Badge(CupertinoIcons.flame_fill, (c) => c.warning, 'Study Streak', '14 days', true),
-  _Badge(CupertinoIcons.chart_bar_fill, (c) => c.due, 'Course Topper', 'MA201', false),
+  _Badge(CupertinoIcons.chart_bar_fill, (c) => c.due, 'Course Topper', 'ISM424', false),
   _Badge(CupertinoIcons.moon_stars_fill, (c) => c.accent, 'Night Owl', '20 late-night sessions', false),
   _Badge(CupertinoIcons.tag_fill, (c) => c.info, 'Marketplace Pro', '10 items sold', false),
   _Badge(CupertinoIcons.person_2_fill, (c) => c.success, 'Mentor', 'Helped 5 peers', false),

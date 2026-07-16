@@ -3,10 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/widgets.dart';
-import '../../../../shared/data/course_repository.dart';
 import '../../../../shared/data/student_repository.dart';
 import '../../../../shared/domain/ai_message.dart';
-import '../../../../shared/domain/course.dart';
 import '../../../../shared/domain/student.dart';
 import '../../application/resume_builder_providers.dart';
 import '../widgets/ai_message_bubble.dart';
@@ -21,13 +19,20 @@ class ResumeBuilderScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final studentAsync = ref.watch(currentStudentProvider);
-    final courses = ref.watch(coursesProvider);
-    final verdict = ref.watch(resumeVerdictProvider);
+    final courseNamesAsync = ref.watch(resumeSkillCourseNamesProvider);
+    final verdictAsync = ref.watch(resumeVerdictProvider);
 
     return AppPushScaffold(
       title: 'Resume Builder',
       body: studentAsync.when(
-        data: (student) => _ResumeBody(student: student, courses: courses, verdict: verdict),
+        data: (student) => verdictAsync.when(
+          data: (verdict) => _ResumeBody(student: student, courseNames: courseNamesAsync.valueOrNull ?? const [], verdict: verdict),
+          loading: () => const Padding(
+            padding: EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+            child: SkeletonListTile(isFirst: true),
+          ),
+          error: (error, stackTrace) => StatusPlaceholder.error(message: 'Couldn\'t load your record: $error'),
+        ),
         loading: () => const Padding(
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
           child: SkeletonListTile(isFirst: true),
@@ -39,9 +44,9 @@ class ResumeBuilderScreen extends ConsumerWidget {
 }
 
 class _ResumeBody extends StatelessWidget {
-  const _ResumeBody({required this.student, required this.courses, required this.verdict});
+  const _ResumeBody({required this.student, required this.courseNames, required this.verdict});
   final Student student;
-  final List<Course> courses;
+  final List<String> courseNames;
   final AiAssistantMessage verdict;
 
   @override
@@ -61,7 +66,7 @@ class _ResumeBody extends StatelessWidget {
         const SectionHeader('Skills'),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
-          child: _SkillsCard(courses: courses),
+          child: _SkillsCard(courseNames: courseNames),
         ),
         const SectionHeader('Projects'),
         Padding(
@@ -153,17 +158,26 @@ class _StatChip extends StatelessWidget {
 }
 
 class _SkillsCard extends StatelessWidget {
-  const _SkillsCard({required this.courses});
-  final List<Course> courses;
+  const _SkillsCard({required this.courseNames});
+  final List<String> courseNames;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    if (courseNames.isEmpty) {
+      return const AppCard(
+        child: StatusPlaceholder.empty(
+          icon: CupertinoIcons.book,
+          title: 'No completed courses yet',
+          message: 'Skills populate automatically as courses appear on your transcript.',
+        ),
+      );
+    }
     return AppCard(
       child: Wrap(
         spacing: 7,
         runSpacing: 7,
-        children: [for (final course in courses) TagChip(label: course.name, color: colors.info)],
+        children: [for (final name in courseNames) TagChip(label: name, color: colors.info)],
       ),
     );
   }

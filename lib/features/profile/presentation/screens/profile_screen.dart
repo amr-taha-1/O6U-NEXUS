@@ -64,7 +64,7 @@ class _ProfileBody extends StatelessWidget {
                   icon: CupertinoIcons.qrcode_viewfinder,
                   iconColor: colors.success,
                   title: 'Check in to a lecture',
-                  subtitle: 'Geo-fenced · Hall B2 in range',
+                  subtitle: 'Geo-fenced · works during class hours',
                   onTap: () => showCheckInSheet(context),
                 ),
                 NavRowCard(

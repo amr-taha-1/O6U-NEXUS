@@ -17,7 +17,8 @@ class StudyPlannerScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final text = context.textStyles;
     final colors = context.colors;
-    final blocks = ref.watch(studyBlocksProvider);
+    final blocksAsync = ref.watch(studyBlocksProvider);
+    final blocks = blocksAsync.valueOrNull ?? const [];
     final insights = ref.watch(plannerInsightsProvider);
 
     return AppPushScaffold(
@@ -34,9 +35,9 @@ class StudyPlannerScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('Week 9 · auto-generated', style: text.title3.copyWith(fontSize: 19)),
+                      Text('This week · your real schedule', style: text.title3.copyWith(fontSize: 19)),
                       const SizedBox(height: 2),
-                      Text('14 study hours placed · 0 conflicts', style: text.subhead),
+                      Text('${blocks.length} real lecture/lab session${blocks.length == 1 ? '' : 's'}', style: text.subhead),
                     ],
                   ),
                 ),

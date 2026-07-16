@@ -56,8 +56,8 @@ class _CheckInSheetState extends State<CheckInSheet> {
             padding: const EdgeInsets.symmetric(horizontal: 14),
             child: Text(
               _done
-                  ? 'CS402 · 10:32 · Hall B2. Your attendance is now 96%. The lecturer sees it instantly.'
-                  : "You're inside Hall B2 and the lecture is running. The code only works from here, during the session.",
+                  ? 'ISM413 · Database Management Systems 2. The lecturer sees it instantly.'
+                  : "You're inside the lecture hall and the session is running. The code only works from here, during the session.",
               style: text.callout,
               textAlign: TextAlign.center,
             ),
